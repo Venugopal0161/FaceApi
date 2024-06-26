@@ -29,7 +29,7 @@ export class LoginPage implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // this.createLoginForm();
+    console.log('ominit');
   }
 
   createLoginForm(): void {

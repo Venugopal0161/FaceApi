@@ -1,7 +1,5 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { LoginGuard } from './authentication/guards/login.guard';
-import { AuthGuard } from './authentication/guards/auth.guard';
 
 const routes: Routes = [
   {
@@ -9,17 +7,22 @@ const routes: Routes = [
     redirectTo: 'login',
     pathMatch: 'full'
   },
-  // {
-  //   path: 'folder/:id',
-  //   loadChildren: () => import('./folder/folder.module').then( m => m.FolderPageModule)
-  // },
+
   {
     path: 'login',
     loadChildren: () => import('./authentication/login/login.module').then( m => m.LoginPageModule)
   },
   {
     path: 'home',
-    loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
+    loadChildren: () => import('./home/home.module').then(m => m.HomePageModule)
+  },
+  {
+    path: 'registeremp',
+    loadChildren: () => import('./employee-face-registration/employee-face-registration.module').then(m => m.EmployeeFaceRegistrationPageModule)
+  },
+  {
+    path: 'recognition',
+    loadChildren: () => import('./employee-face-recognition/employee-face-recognition.module').then(m => m.EmployeeFaceRecognitionPageModule)
   }
 ];
 
