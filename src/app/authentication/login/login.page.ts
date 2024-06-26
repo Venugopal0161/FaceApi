@@ -78,7 +78,7 @@ this.presentLoading();
             // this.globalServ.setAppvariables(null);
             // role_present = false;
             localStorage.setItem('user-data', JSON.stringify(res.response));
-            this.router.navigate(['']);
+            this.router.navigate(['/home']);
             // home
           } 
         },

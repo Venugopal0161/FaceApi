@@ -1,8 +1,3 @@
-ion-content {
-
-    // --ion-background-color: #FAFAFF;
-        --ion-background-color: #F1F0F4;
-}
 
 ion-item {
     height: 56px;
@@ -28,7 +23,7 @@ ion-item:hover {
     // outline: none;
     border-radius: 8px;
     border-style: solid;
-    border-color: var(--ion-color-primary);
+    border-color: var(--ion-color-secondary,);
     border-width: 0.5px;
     background-color: #fff;
     // box-shadow: 0 0 0 5px rgb(129 140 248 / 30%);
@@ -137,3 +132,16 @@ ion-button {
         aspect-ratio: 4/3;
     }
 }
+
+.logo-container {
+    text-align: center;
+
+    h1 {
+      font-size: 32px;
+      font-weight: 800;
+    }
+
+    p {
+      margin-bottom: 42px;
+    }
+  }
