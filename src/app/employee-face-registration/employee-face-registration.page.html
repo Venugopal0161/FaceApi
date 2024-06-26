@@ -6,24 +6,41 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content class="ion-padding">
 
-  <ion-item lines="none">
-    <ion-label>
-      <ion-icon style="color: #9ca3af; font-size: 21px;margin-right: 9px"
-        aria-hidden="true" name="lock-closed-outline"></ion-icon>
-    </ion-label>
+  <!-- <ion-item lines="none"> -->
+  <ion-select label="Department" class="animate__animated animate__fadeInUp" label-placement="floating"
+    fill="outline" (ionChange)="getEmployeesData($event)">
+    <ion-select-option *ngFor="let c of deptList"
+      [value]="c.deptCode">{{c.deptName}}</ion-select-option>
+  </ion-select>
 
-    <ion-select>
-      <ion-select label="Outline select" label-placement="floating"
-        fill="outline">
-        <ion-select-option value="apple">Apple</ion-select-option>
-        <ion-select-option value="banana">Banana</ion-select-option>
-        <ion-select-option value="orange">Orange</ion-select-option>
-      </ion-select>
-    </ion-select>
+  <ion-select label="Employee" class="ion-margin-top animate__animated animate__fadeInUp" label-placement="floating"
+    fill="outline" (ionChange)="changeInEmp($event)">
+    <ion-select-option *ngFor="let c of empList"
+      [value]="c.employeeMaster.employeeCode">{{c.employeeMaster.employeeName}}
+      - [{{c.employeeMaster.employeeCode}}]</ion-select-option>
+  </ion-select>
+  <div class="ion-margin-top animate__animated animate__fadeInUp"  (click)="capturePhoto()">
+    <img src="../../assets/Auth.svg" style="display: flex; margin: auto;" alt="employee image" *ngIf="!captureImg">
 
+    <img *ngIf="captureImg" style="height: 40vh; display: flex; margin: auto;"
+      [src]="imageSrc" />
+  </div>
 
-  </ion-item>
-
+  <ion-row class="ion-margin-top animate__animated animate__fadeInUp">
+    <ion-col>
+      <ion-button (click)="clear()" color="danger" expand="block" size="6" >Clear</ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button (click)="capturePhoto()" color="secondary" expand="block" size="6" >Re Take</ion-button>
+    </ion-col>
+  </ion-row>
 </ion-content>
+
+<ion-footer class="animate__animated animate__fadeInUp">
+  <ion-button class="ion-margin-top" type="submit" expand="block" size="large"
+    color="secondary" (click)="submit()" >
+    Submit
+  </ion-button>
+</ion-footer>
