@@ -1,0 +1,139 @@
+ion-content {
+
+    // --ion-background-color: #FAFAFF;
+        --ion-background-color: #F1F0F4;
+}
+
+ion-item {
+    height: 56px;
+    // border: 1px solid #23539B;
+    border-radius: 8px;
+}
+
+ion-input {
+    background-color: #ffffff;
+    --placeholder-color: #A0AEC0 !important;
+    color:#111827 !important;
+    font-family: "Urbanist-SemiBold";
+    font-weight: 400;
+}
+
+
+ion-item::part(native) {
+    background-color: #ffffff;
+}
+
+ion-item:focus,
+ion-item:hover {
+    // outline: none;
+    border-radius: 8px;
+    border-style: solid;
+    border-color: var(--ion-color-primary);
+    border-width: 0.5px;
+    background-color: #fff;
+    // box-shadow: 0 0 0 5px rgb(129 140 248 / 30%);
+}
+
+// ::placeholder {
+//     color: rgba(0, 0, 0, 50%);
+//     // color: #0326a45d;
+//     font-size: 14px;
+
+// }
+
+.forgot-password {
+    color: #a1a1a1;
+    text-align: center;
+    font-family: var(--body-small-medium-font-family,
+            "Urbanist-Medium",
+            sans-serif);
+    font-size: var(--body-small-medium-font-size, 12px);
+    line-height: var(--body-small-medium-line-height, 170%);
+    font-weight: var(--body-small-medium-font-weight, 500);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+ion-button {
+    text-transform: none;
+}
+
+.posabsolute {
+    position: absolute;
+    text-align: center;
+}
+
+.logoDiv {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    // align-items: center;
+    gap: 30px;
+
+    .xuarLogo {
+        width: 117.4px;
+        height: 34px;
+        position: static;
+    }
+}
+
+
+.imageBox {
+    transform: translateY(5vh);
+}
+
+.hello-again {
+    color: #424245;
+    text-align: left;
+    font-family: var(--heading-h-4-font-family, "Urbanist-Bold", sans-serif);
+    font-size: var(--heading-h-4-font-size, 24px);
+    line-height: var(--heading-h-4-line-height, 130%);
+    font-weight: var(--heading-h-4-font-weight, 700);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.subTittle {
+    color: #ffffff;
+    font-family: var(--body-large-medium-font-family,
+            "Urbanist-Medium",
+            sans-serif);
+    font-size: var(--body-large-medium-font-size, 16px);
+    line-height: var(--body-large-medium-line-height, 145%);
+    font-weight: var(--body-large-medium-font-weight, 500);
+    width: 233px;
+}
+
+.loginImage {
+    width: 100%;
+    position: relative;
+    aspect-ratio: 3/2;
+}
+
+// if the large mobile screen media query 
+
+@media (min-width: 425px) and (max-width: 596px) {
+    .loginImage {
+        width: auto;
+        position: relative;
+        aspect-ratio: 4/3;
+    }
+
+}
+
+@media (min-width: 768px) {
+    .loginImage {
+        aspect-ratio: 5/1;
+    }
+}
+
+@media (min-width: 360px) and (max-width: 425px) {
+    .loginImage {
+        aspect-ratio: 4/3;
+    }
+}

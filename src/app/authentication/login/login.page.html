@@ -1,0 +1,83 @@
+<ion-content class="ion-padding" fullscreen="true">
+
+  <div
+    style="
+      
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-top: 40px;
+      gap: 16px;
+      transform: translateY(38vh);
+    "
+  >
+    <!-- <ion-list> -->
+    <ion-item lines="none">
+      <ion-icon
+        style="color: #9ca3af; font-size: 21px; margin-right: 1px"
+        slot="start"
+        aria-hidden="true"
+        name="mail-outline"
+      ></ion-icon>
+      <ion-input
+        style="height: 56px"
+        class="input"
+        label=""
+        type="text"
+        placeholder="Username"
+        [(ngModel)]="username"
+      >
+      </ion-input>
+    </ion-item>
+
+    <!-- <ion-item lines="none">
+      <ion-icon
+        style="color: #9ca3af; font-size: 21px; margin-right: 19px"
+        slot="start"
+        aria-hidden="true"
+        name="lock-closed-outline"
+      ></ion-icon>
+      <ion-input
+        style="height: 56px"
+        class="input"
+        name="password"
+        id="passwordField"
+        type="password"
+        [type]="showPassword?'text':'password'"
+        placeholder="Enter Password"
+        [(ngModel)]="password"
+      >
+      </ion-input>
+
+    </ion-item> -->
+
+    <ion-item lines="none">
+      <ion-label>
+        <ion-icon style="color: #9ca3af; font-size: 21px;margin-right: 9px" aria-hidden="true" name="lock-closed-outline"></ion-icon>
+      </ion-label>
+      <ion-input style="height: 56px;"
+      class="input" name="password" id="passwordField" [type]="showPassword?'text':'password'"
+        placeholder="Password" (keyup.enter)="login()"
+        [(ngModel)]="password">
+      </ion-input>
+      <ion-icon  slot="end" [name]="showPassword ?'eye':'eye-off'" (click)="showPassword = !showPassword"
+      style="color: #9ca3af; font-size: 21px;">
+      </ion-icon>
+      </ion-item>
+
+    <ion-button
+      style="margin: auto; height: 56px; width: -webkit-fill-available"
+      expand="block"
+      class="ion-button-col"
+      (click)="login()"
+    >
+      Login
+    </ion-button>
+
+    <!-- </ion-list> -->
+  <div class="forgot-password" >Forgot Password?</div>
+
+  </div>
+
+
+</ion-content>
