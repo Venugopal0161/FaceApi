@@ -1,0 +1,7 @@
+{
+  "name": "Mobile_Templete",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
