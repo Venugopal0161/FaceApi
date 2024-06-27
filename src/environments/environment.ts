@@ -5,11 +5,11 @@
 export const environment = {
   production: false,
 
-  // connect_url: 'https://dev.springlogix.com/api/',
-  // root_url: 'https://dev.springlogix.com/',
+  connect_url: 'https://dev.springlogix.com/api/',
+  root_url: 'https://dev.springlogix.com/',
 
-  connect_url: 'https://192.168.0.229:446/api/',
-  root_url: 'https://192.168.0.229:446/',
+  // connect_url: 'https://192.168.0.229:446/api/',
+  // root_url: 'https://192.168.0.229:446/',
 
 };
 
