@@ -8,7 +8,12 @@ import { environment } from 'src/environments/environment';
 export class HttpPostService {
 
   constructor(private http: HttpClient) { }
+  create(master, data) {
+    let headers = new HttpHeaders();
+    headers = headers.append("Authorization", "Bearer " + localStorage.getItem('token'));
+    headers = headers.append("Content-Type", "application/json");
+    return this.http.post(`${environment.connect_url}${master}`, data, { headers });
+  }
 
- 
 
 }
