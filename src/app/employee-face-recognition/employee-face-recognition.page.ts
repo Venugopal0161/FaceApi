@@ -34,6 +34,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
   }
   ngOnInit(): void {
     this.getFingerData();
+    // this.openCamera();
   }
 
   openCamera() {
