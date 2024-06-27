@@ -9,6 +9,9 @@ import { CameraPreview } from '@capacitor-community/camera-preview';
 import { CameraPreviewOptions, CameraPreviewPictureOptions } from '@capacitor-community/camera-preview';
 
 import '@capacitor-community/camera-preview';
+import { GlobalvariablesService } from '../services/globalvariables.service';
+import { LoadingController } from '@ionic/angular';
+import { ToastService } from '../services/toast.service';
 @Component({
   selector: 'app-employee-face-recognition',
   templateUrl: './employee-face-recognition.page.html',
@@ -27,6 +30,10 @@ export class EmployeeFaceRecognitionPage implements OnInit {
   constructor(
     private httpGet: HttpGetService,
     private httpPost: HttpPostService,
+    private global : GlobalvariablesService,
+    public loadingController: LoadingController,
+    public toastService: ToastService,
+
     // private cameraPreview: CameraPreviewOptions,
     // private CameraPreviewPictureOptions: CameraPreviewPictureOptions
   ) {
@@ -179,6 +186,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
 
   recgonise = async (base64data) => {
     console.log('came in run block venu');
+    this.global.presentLoading();
     await Promise.all([
       faceapi.nets.ssdMobilenetv1.loadFromUri('../../assets/models/weights'),
       faceapi.nets.faceLandmark68Net.loadFromUri('../../assets/models/weights'),
@@ -229,6 +237,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
     // Step 4: Count occurrences of the minimum score
     const minScoreCount = scores.filter(score => score === minScore).length;
     console.log('minScoreCount', minScoreCount);
+    this.loadingController.dismiss();
 
     // Step 5: Proceed if there is only one least value
     if (minScoreCount === 1) {
@@ -237,13 +246,19 @@ export class EmployeeFaceRecognitionPage implements OnInit {
       const emp = bestMatch.emp;
       const label = bestMatch.match.toString();
       console.warn(label, emp.employeeName);
+      this.toastService.presentToast('Success', `Match found for ${emp.employeeName}`, 'top', 'success', 2000);
       this.speak(`Heyy ${emp.employeeName}`);
 
       // Ensure the label is not "unknown"
       if (!label.includes("unknown")) {
         let options = { label: "employee" };
       }
+    } else if(minScoreCount === 0){
+      this.toastService.presentToast('Error', 'No match found', 'top', 'danger', 2000);
+      this.speak('Sorry, I cannot recognize you');
     }
+    this.stopCamera();
+    this.openCamera();
   }
   speak(text: string): void {
     if ('speechSynthesis' in window) {
@@ -253,8 +268,16 @@ export class EmployeeFaceRecognitionPage implements OnInit {
       utterance.volume = 1; // Set the volume (0 to 1)
 
       window.speechSynthesis.speak(utterance);
+      
     } else {
       console.warn('Text-to-Speech is not supported in this browser.');
     }
   }
+
+  deleteImage() {
+    this.captureImg = false;
+    this.image = null;
+    this.cameraActive = true;
+  }
+
 }

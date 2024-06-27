@@ -3,6 +3,7 @@ import { HttpGetService } from './http-get.service';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { UtilService } from './util.service';
+import { LoadingController } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ export class GlobalvariablesService {
   constructor(private http: HttpClient,
     private utilServ: UtilService,
     private router: Router,
+    public loadingController: LoadingController,
     private httpGet: HttpGetService) { }
 
   async setAppvariables(response) {
@@ -35,5 +37,19 @@ export class GlobalvariablesService {
     // localStorage.setItem('division', response.division);
     localStorage.setItem('user-data', JSON.stringify(response));
   }
+
+
+  async presentLoading() {
+    const loading = await this.loadingController.create({
+      cssClass: 'my-custom-class',
+      message: 'Please be patient...',
+      // duration: 2000
+    });
+    await loading.present();
+
+    const { role, data } = await loading.onDidDismiss();
+  }
+
+  
 
 }
