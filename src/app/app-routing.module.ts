@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from './authentication/guards/auth.guard';
+import { LoginGuard } from './authentication/guards/login.guard';
 
 const routes: Routes = [
   {
@@ -10,7 +12,7 @@ const routes: Routes = [
 
   {
     path: 'login',
-    loadChildren: () => import('./authentication/login/login.module').then( m => m.LoginPageModule)
+    loadChildren: () => import('./authentication/login/login.module').then(m => m.LoginPageModule), canActivate: [LoginGuard] 
   },
   {
     path: 'home',
@@ -18,11 +20,11 @@ const routes: Routes = [
   },
   {
     path: 'registeremp',
-    loadChildren: () => import('./employee-face-registration/employee-face-registration.module').then(m => m.EmployeeFaceRegistrationPageModule)
+    loadChildren: () => import('./employee-face-registration/employee-face-registration.module').then(m => m.EmployeeFaceRegistrationPageModule), canActivate: [AuthGuard] 
   },
   {
     path: 'recognition',
-    loadChildren: () => import('./employee-face-recognition/employee-face-recognition.module').then(m => m.EmployeeFaceRecognitionPageModule)
+    loadChildren: () => import('./employee-face-recognition/employee-face-recognition.module').then(m => m.EmployeeFaceRecognitionPageModule), canActivate: [AuthGuard]
   },
 ];
 

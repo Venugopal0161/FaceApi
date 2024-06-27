@@ -9,7 +9,7 @@ export class LoginGuard implements CanActivate {
 
   canActivate(): boolean {
     if (localStorage.getItem('user-data')) {
-      this.router.navigate(['/home']);
+      this.router.navigate(['/registeremp']);
       return false;
     }
     return true;
