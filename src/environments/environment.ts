@@ -7,6 +7,8 @@ export const environment = {
 
   connect_url: 'https://dev.springlogix.com/api/',
   root_url: 'https://dev.springlogix.com/',
+  modelsBaseUrl: '/assets/models/',
+  modelsBaseUrl1: '../../assets/models/'
 
   // connect_url: 'https://192.168.0.229:446/api/',
   // root_url: 'https://192.168.0.229:446/',

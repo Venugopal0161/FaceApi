@@ -7,37 +7,23 @@
 
 <ion-content class="ion-padding">
 
-  <div id="cameraPreview" class="cameraPreview">
+  <!-- <div id="cameraPreview" class="cameraPreview">
 
-    <ion-row style="position: absolute; z-index: 1; bottom: 5%; width: 90%;" *ngIf="cameraActive">
-      <ion-col size="6">
-        <ion-button color="danger"  expand="block" (click)="stopCamera()"> Cancel
-          <!-- <ion-icon name="close-circle" slot="icon-only"></ion-icon> -->
-        </ion-button>
-      </ion-col>
-      <ion-col size="6">
-        <ion-button expand="block" color="secondary" (click)="captureImage()"> Capture
-          <!-- <ion-icon name="camera" slot="icon-only"></ion-icon> -->
-        </ion-button>
-      </ion-col>
-    </ion-row>
 
-  </div>
- 
+  </div> -->
 
-<ion-img [src]="image" *ngIf="image && !cameraActive" style="height: 100%;"></ion-img>
-<!-- <ion-button  expand="full" *ngIf="!cameraActive">Open Camera</ion-button> -->
+<!-- <ion-img [src]="image" *ngIf="image && !cameraActive" style="height: 100%;"></ion-img> -->
 
  
-    <!-- <div class="shape" *ngIf="captureImg">
+    <div class="shape" *ngIf="captureImg">
       <div id="oval"></div>
       <img *ngIf="captureImg" style="height: 100%;"
         [src]="clickedimageSrc" />
     </div>
     <div style="margin-top: 2%; display: flex;
       justify-content: center;">
-      <ion-button (click)="clickToRecgonise()">Recognise Face</ion-button>
-    </div> -->
+      <!-- <ion-button (click)="capturePhoto()">Recognise Face</ion-button> -->
+    </div>
    
 
   
@@ -66,12 +52,12 @@
     <ion-row>
       <ion-col size="6">
         <ion-button color="danger"  expand="block" (click)="deleteImage()"> Delete
-          <!-- <ion-icon name="close-circle" slot="icon-only"></ion-icon> -->
         </ion-button>
       </ion-col>
       <ion-col size="6">
-        <ion-button expand="block" color="secondary" (click)="captureImage()"> Re Take
-          <!-- <ion-icon name="camera" slot="icon-only"></ion-icon> -->
+        <ion-button expand="block" color="secondary" *ngIf="captureImg" (click)="capturePhoto()"> Re Capture
+        </ion-button>
+         <ion-button expand="block" color="secondary" *ngIf="!captureImg" (click)="capturePhoto()"> Capture
         </ion-button>
       </ion-col>
     </ion-row>

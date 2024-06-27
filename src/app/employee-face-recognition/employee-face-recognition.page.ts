@@ -1,16 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpGetService } from '../services/http-get.service';
-import { HttpPostService } from '../services/http-post.service';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import * as faceapi from 'face-api.js';
+import { HttpGetService } from '../services/http-get.service';
+import { HttpPostService } from '../services/http-post.service';
 
 import { CameraPreview } from '@capacitor-community/camera-preview';
 
 import { CameraPreviewOptions, CameraPreviewPictureOptions } from '@capacitor-community/camera-preview';
 
+import { HttpClient } from '@angular/common/http';
 import '@capacitor-community/camera-preview';
-import { GlobalvariablesService } from '../services/globalvariables.service';
+import { Capacitor } from '@capacitor/core';
 import { LoadingController } from '@ionic/angular';
+import { environment } from 'src/environments/environment';
+import { GlobalvariablesService } from '../services/globalvariables.service';
 import { ToastService } from '../services/toast.service';
 @Component({
   selector: 'app-employee-face-recognition',
@@ -30,7 +33,8 @@ export class EmployeeFaceRecognitionPage implements OnInit {
   constructor(
     private httpGet: HttpGetService,
     private httpPost: HttpPostService,
-    private global : GlobalvariablesService,
+    private http: HttpClient,
+    private global: GlobalvariablesService,
     public loadingController: LoadingController,
     public toastService: ToastService,
 
@@ -41,39 +45,41 @@ export class EmployeeFaceRecognitionPage implements OnInit {
   }
   ngOnInit(): void {
     this.getFingerData();
-    this.openCamera();
+    this.capturePhoto();
   }
 
   openCamera() {
-   const cameraPreview : CameraPreviewOptions = {
-        position: 'front',
-        parent: 'cameraPreview',
-        className: 'cameraPreview',
+    const cameraPreview: CameraPreviewOptions = {
+      position: 'front',
+      parent: 'cameraPreview',
+      className: 'cameraPreview',
     }
     CameraPreview.start(cameraPreview);
     this.cameraActive = true;
   }
 
 
-  async stopCamera(){
-    await CameraPreview.stop();
+  async stopCamera() {
+  // await CameraPreview.stop();
     this.cameraActive = false;
+    console.log('stoped venu');
+
   }
 
 
- async captureImage(){
+  async captureImage() {
     const CameraPreviewPictureOptions: CameraPreviewPictureOptions = {
-        quality: 90
-    
+      quality: 90
+
     };
 
     const result = await CameraPreview.capture(CameraPreviewPictureOptions);
     this.image = `data:image/jpeg;base64,${result.value}`;
     this.recgonise(this.image);
     this.stopCamera();
- }
+  }
 
-  flipCamera(){}
+  flipCamera() { }
 
 
 
@@ -182,83 +188,156 @@ export class EmployeeFaceRecognitionPage implements OnInit {
       reader.readAsDataURL(blob);
     });
   }
+  getModelPath = (fileName: string) => {
+    return Capacitor.convertFileSrc(`assets/models/${fileName}`);
+  };
 
-
+  // private async loadModel(url: string): Promise<any> {
+  //   const response = await this.http.get(url, { responseType: 'arraybuffer' }).toPromise();
+  //   const buffer = new Uint8Array(response);
+  //   return faceapi.tf.io.decodeWeights(buffer, [
+  //     { name: 'face_landmark_68_model', shape: [1, 1, 1024, 18], dtype: 'float32' },
+  //     { name: 'face_recognition_model', shape: [1, 1, 1024, 18], dtype: 'float32' },
+  //     { name: 'age_gender_model', shape: [1, 1, 1024, 18], dtype: 'float32' },
+  //   ]);
+  // }
+  // getModelPath = (fileName: string) => {
+  //    this.http.get(`assets/models/weights/${fileName}`).subscribe((res: any) => {
+  //     console.log(res);
+  //      return res.response
+  //   })
+  // };
   recgonise = async (base64data) => {
     console.log('came in run block venu');
     this.global.presentLoading();
-    await Promise.all([
-      faceapi.nets.ssdMobilenetv1.loadFromUri('../../assets/models/weights'),
-      faceapi.nets.faceLandmark68Net.loadFromUri('../../assets/models/weights'),
-      faceapi.nets.faceRecognitionNet.loadFromUri('../../assets/models/weights'),
-      faceapi.nets.ageGenderNet.loadFromUri('../../assets/models/weights'),
-    ])
+
+    try {
+      console.log('>>>', faceapi.nets.ssdMobilenetv1.loadFromUri(this.getModelPath('ssd_mobilenetv1_model-weights_manifest.json')));
+
+      await Promise.all([
+        faceapi.nets.ssdMobilenetv1.loadFromUri(this.getModelPath('ssd_mobilenetv1_model-weights_manifest.json')),
+        faceapi.nets.faceLandmark68Net.loadFromUri(this.getModelPath('face_landmark_68_model-weights_manifest.json')),
+        faceapi.nets.faceRecognitionNet.loadFromUri(this.getModelPath('face_recognition_model-weights_manifest.json')),
+        faceapi.nets.ageGenderNet.loadFromUri(this.getModelPath('age_gender_model-weights_manifest.json')),
+      ]);
+      console.log('Models loaded successfully>>> 1');
+    } catch (error) {
+      console.error('Error loading models1:', error);
+    }
+
+    try {
+      await Promise.all([
+        faceapi.nets.ssdMobilenetv1.loadFromUri('/assets/models'),
+        faceapi.nets.faceLandmark68Net.loadFromUri('/assets/models'),
+        faceapi.nets.faceRecognitionNet.loadFromUri('/assets/models'),
+        faceapi.nets.ageGenderNet.loadFromUri('/assets/models'),
+      ]);
+      console.log('Models loaded successfully>>2');
+    } catch (error) {
+      console.error('Error loading models2:', error);
+    }
+
+    try {
+      await Promise.all([
+        faceapi.nets.ssdMobilenetv1.loadFromUri(environment.modelsBaseUrl),
+        faceapi.nets.faceLandmark68Net.loadFromUri(environment.modelsBaseUrl),
+        faceapi.nets.faceRecognitionNet.loadFromUri(environment.modelsBaseUrl),
+        faceapi.nets.ageGenderNet.loadFromUri(environment.modelsBaseUrl),
+      ]);
+      console.log('Models loaded successfully>>3');
+    } catch (error) {
+      console.error('Error loading models3:', error);
+    }
+    try {
+      await Promise.all([
+        faceapi.nets.ssdMobilenetv1.loadFromUri('./assets/models'),
+        faceapi.nets.faceLandmark68Net.loadFromUri('./assets/models'),
+        faceapi.nets.faceRecognitionNet.loadFromUri('./assets/models'),
+        faceapi.nets.ageGenderNet.loadFromUri('./assets/models'),
+      ]);
+      console.log('Models loaded successfully>>4');
+    } catch (error) {
+      console.error('Error loading models4:', error);
+    }
+
+    // await Promise.all([
+    //   faceapi.nets.ssdMobilenetv1.loadFromUri('../../assets/public/assets/models/weights'),
+    //   faceapi.nets.faceLandmark68Net.loadFromUri('../../assets/public/assets/models/weights'),
+    //   faceapi.nets.faceRecognitionNet.loadFromUri('../../assets/public/assets/models/weights'),
+    //   faceapi.nets.ageGenderNet.loadFromUri('../../assets/public/assets/models/weights')
+    // ])
+    // D: \refer\basic_mobile_template\android\app\src\main\assets\public\assets\models\weights)
 
     const refFace = await faceapi.fetchImage(base64data)
     let refFaceAiData = await faceapi.detectAllFaces(refFace).withFaceLandmarks().withFaceDescriptors()
+    console.log('your face captured venu', refFaceAiData);
+    if (refFaceAiData.length > 0) {
+      let empImage: string;
+      let listOfDistances = [];
+      const header = 'data:image/';
+      console.log('starting to itterate venu');
 
-    // console.log(refFace);
-    let empImage: string;
-    let listOfDistances = [];
-    const header = 'data:image/';
-    for (let emp of this.employeeFingerData) {
-      empImage = header.concat(emp.fileType) + ';base64,' + emp.enrollTemplate
+      for (let emp of this.employeeFingerData) {
+        empImage = header.concat(emp.fileType) + ';base64,' + emp.enrollTemplate
 
-      const facesToCheck = await faceapi.fetchImage(empImage)
-      let facesToCheckAiData = await faceapi.detectAllFaces(facesToCheck).withFaceLandmarks().withFaceDescriptors()
+        const facesToCheck = await faceapi.fetchImage(empImage)
+        let facesToCheckAiData = await faceapi.detectAllFaces(facesToCheck).withFaceLandmarks().withFaceDescriptors()
 
-      let faceMatcher = new faceapi.FaceMatcher(refFaceAiData);
+        let faceMatcher = new faceapi.FaceMatcher(refFaceAiData);
 
-      facesToCheckAiData = faceapi.resizeResults(facesToCheckAiData, facesToCheck)
-      const matchResults = facesToCheckAiData.map(face => {
-        const { detection, descriptor } = face;
-        listOfDistances.push({
-          face,
-          emp,
-          match: faceMatcher.findBestMatch(descriptor)
-        })
-        return {
-          face,
-          match: faceMatcher.findBestMatch(descriptor)
-        };
+        facesToCheckAiData = faceapi.resizeResults(facesToCheckAiData, facesToCheck)
+        const matchResults = facesToCheckAiData.map(face => {
+          const { detection, descriptor } = face;
+          listOfDistances.push({
+            face,
+            emp,
+            match: faceMatcher.findBestMatch(descriptor)
+          })
+          return {
+            face,
+            match: faceMatcher.findBestMatch(descriptor)
+          };
 
-      });
-
-
-    }
-    console.log('listOfDistances', listOfDistances);
-    // Step 2: Extract the scores
-    const scores = listOfDistances.map(result => result.match.distance);
-    console.log('scores lessthan 6', scores);
-
-    // Step 3: Find the minimum score
-    const minScore = Math.min(...scores);
-
-    // Step 4: Count occurrences of the minimum score
-    const minScoreCount = scores.filter(score => score === minScore).length;
-    console.log('minScoreCount', minScoreCount);
-    this.loadingController.dismiss();
-
-    // Step 5: Proceed if there is only one least value
-    if (minScoreCount === 1) {
-      const bestMatch = listOfDistances.find(result => result.match.distance === minScore);
-      const { detection } = bestMatch.face;
-      const emp = bestMatch.emp;
-      const label = bestMatch.match.toString();
-      console.warn(label, emp.employeeName);
-      this.toastService.presentToast('Success', `Match found for ${emp.employeeName}`, 'top', 'success', 2000);
-      this.speak(`Heyy ${emp.employeeName}`);
-
-      // Ensure the label is not "unknown"
-      if (!label.includes("unknown")) {
-        let options = { label: "employee" };
+        });
       }
-    } else if(minScoreCount === 0){
-      this.toastService.presentToast('Error', 'No match found', 'top', 'danger', 2000);
-      this.speak('Sorry, I cannot recognize you');
+      console.log('itteration done venu');
+
+      console.log('listOfDistances venu', listOfDistances);
+      // Step 2: Extract the scores
+      const scores = listOfDistances.map(result => result.match.distance);
+      console.log('scores lessthan 6 venu', scores);
+
+      // Step 3: Find the minimum score
+      const minScore = Math.min(...scores);
+
+      // Step 4: Count occurrences of the minimum score
+      const minScoreCount = scores.filter(score => score === minScore).length;
+      console.log('minScoreCount venu', minScoreCount);
+      this.loadingController.dismiss();
+
+      // Step 5: Proceed if there is only one least value
+      if (minScoreCount === 1) {
+        const bestMatch = listOfDistances.find(result => result.match.distance === minScore);
+        const { detection } = bestMatch.face;
+        const emp = bestMatch.emp;
+        const label = bestMatch.match.toString();
+        console.warn(label, emp.employeeName);
+        this.toastService.presentToast('Success', `Match found for ${emp.employeeName}`, 'top', 'success', 2000);
+        this.speak(`Heyy ${emp.employeeName}`);
+
+        // Ensure the label is not "unknown"
+        if (!label.includes("unknown")) {
+          let options = { label: "employee" };
+        }
+      } else if (minScoreCount === 0) {
+        this.toastService.presentToast('Error', 'No match found', 'top', 'danger', 2000);
+        this.speak('Sorry, I cannot recognize you');
+      }
+      this.deleteImage();
     }
-    this.stopCamera();
-    this.openCamera();
+    this.loadingController.dismiss();
+    this.toastService.presentToast('Error', 'face not recognised properly', 'top', 'danger', 2000);
+
   }
   speak(text: string): void {
     if ('speechSynthesis' in window) {
@@ -268,7 +347,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
       utterance.volume = 1; // Set the volume (0 to 1)
 
       window.speechSynthesis.speak(utterance);
-      
+
     } else {
       console.warn('Text-to-Speech is not supported in this browser.');
     }
@@ -276,8 +355,10 @@ export class EmployeeFaceRecognitionPage implements OnInit {
 
   deleteImage() {
     this.captureImg = false;
-    this.image = null;
+    this.clickedimageSrc = null;
     this.cameraActive = true;
+    this.imageObj = null;
+    this.capturePhoto();
   }
 
 }
