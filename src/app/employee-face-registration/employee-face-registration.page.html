@@ -30,10 +30,11 @@
 
   <ion-row class="ion-margin-top animate__animated animate__fadeInUp">
     <ion-col>
-      <ion-button (click)="clear()" color="danger" expand="block" size="6" >Clear</ion-button>
+      <ion-button (click)="clear()" color="danger" expand="block" size="6" [disabled]="!captureImg" >Clear</ion-button>
     </ion-col>
     <ion-col>
-      <ion-button (click)="capturePhoto()" color="secondary" expand="block" size="6" >Re Take</ion-button>
+      <ion-button (click)="capturePhoto()" color="secondary" expand="block" size="6" *ngIf="captureImg">Re Capture</ion-button>
+      <ion-button (click)="capturePhoto()" color="secondary" expand="block" size="6" *ngIf="!captureImg">Capture</ion-button>
     </ion-col>
   </ion-row>
 </ion-content>

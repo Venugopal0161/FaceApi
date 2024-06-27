@@ -33,7 +33,6 @@ export class EmployeeFaceRegistrationPage implements OnInit {
   }
   getDeptList() {
     this.httpGet.getMasterList('depts/active').subscribe((res: any) => {
-      console.log(res.response);
       let dpt = [];
       if (res.response.length > 0) {
         dpt = res.response;
@@ -51,11 +50,9 @@ export class EmployeeFaceRegistrationPage implements OnInit {
   }
 
   getEmployeesData(ev) {
-    console.log('jnfv', ev);
     this.httpGet
       .getMasterList('empswithpayroll?dept=' + ev.target.value + '&image=false')
       .subscribe((res: any) => {
-        console.log(res);
         this.empList = res.response;
       },
         err => {
@@ -82,16 +79,10 @@ export class EmployeeFaceRegistrationPage implements OnInit {
     });
 
     this.imageObj = image
-    console.log('Original image:', image);
-
     // Convert Uri to Blob
     const blob = await this.uriToBlob(image.webPath);
-
     // Resize and compress the image
     const compressedBlob = await this.resizeAndCompressImage(blob, 50);
-
-    console.log('Compressed blob:', compressedBlob);
-
     // Convert compressed blob to base64 for storage or display
     await this.blobToBase64(compressedBlob);
     return image;
@@ -106,8 +97,6 @@ export class EmployeeFaceRegistrationPage implements OnInit {
       reader.onloadend = () => {
         const base64data = reader.result as string;
         const base64 = base64data.replace(/^data:image\/\w+;base64,/, '');
-
-        console.log('Base64 data:', base64data);
         this.imageSrc = base64data
         this.base64String = base64;
         this.captureImg = true;
@@ -141,7 +130,6 @@ export class EmployeeFaceRegistrationPage implements OnInit {
     if (this.selectedEmpCode) {
       if (this.base64String) {
         const selectedEmpRecord = this.empList.find(x => x.employeeMaster.employeeCode == this.selectedEmpCode);
-        console.log('selectedEmpRecord', selectedEmpRecord);
         const obj = {
           base64: this.base64String,
           empCode: selectedEmpRecord.employeeMaster.employeeCode,
@@ -151,9 +139,7 @@ export class EmployeeFaceRegistrationPage implements OnInit {
           "enrollTemplate": this.base64String,
           "fileType": this.imageObj.format,
         }
-        console.log(obj);
         this.httpPost.create('fingerdata', obj).subscribe((res: any) => {
-          console.log(res);
           if (res.status.message == 'SUCCESS') {
             this.toastService.presentToast('Success', 'Employee registered Successfully', 'top', 'success', 2000);
             this.clear();
@@ -172,8 +158,6 @@ export class EmployeeFaceRegistrationPage implements OnInit {
     else {
       this.toastService.presentToast('Error', 'Please select employee', 'top', 'danger', 2000);
     }
-    console.log('submit', this.selectedEmpCode);
-
   }
 
 }
