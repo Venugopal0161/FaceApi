@@ -34,7 +34,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
   }
   ngOnInit(): void {
     this.getFingerData();
-    // this.openCamera();
+    this.openCamera();
   }
 
   openCamera() {
@@ -62,6 +62,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
 
     const result = await CameraPreview.capture(CameraPreviewPictureOptions);
     this.image = `data:image/jpeg;base64,${result.value}`;
+    this.recgonise(this.image);
     this.stopCamera();
  }
 
