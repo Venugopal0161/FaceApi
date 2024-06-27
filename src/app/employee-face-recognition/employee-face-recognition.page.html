@@ -1,12 +1,46 @@
-<ion-header [translucent]="true">
+<ion-header class="">
   <ion-toolbar>
         <ion-menu-button slot="start"></ion-menu-button>
     <ion-title>Mark Attendance</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content class="ion-padding">
+
+  <div id="cameraPreview" class="cameraPreview">
+
+    <div *ngIf="cameraActive">
+       <!-- <img [src]="image" *ngIf="image" style="height: 100%;"> -->
+
+       <ion-button expand="block" id="close" (click)="stopCamera()">
+        <ion-icon name="close-circle" slot="icon-only"></ion-icon>
+       </ion-button>
+       <ion-button expand="block" id="capture" (click)="captureImage()">
+        <ion-icon name="camera" slot="icon-only"></ion-icon>
+       </ion-button>
+       <ion-button expand="block" id="flip" (click)="flipCamera()">
+        <ion-icon name="camera-reverse" slot="icon-only"></ion-icon>
+       </ion-button>
+
+    </div>
+
+  </div>
  
+
+<ion-img [src]="image" *ngIf="image && !cameraActive" style="height: 100%;"></ion-img>
+<ion-button (click)="openCamera()" expand="full" *ngIf="!cameraActive">Open Camera</ion-button>
+
+ 
+    <!-- <div class="shape" *ngIf="captureImg">
+      <div id="oval"></div>
+      <img *ngIf="captureImg" style="height: 100%;"
+        [src]="clickedimageSrc" />
+    </div>
+    <div style="margin-top: 2%; display: flex;
+      justify-content: center;">
+      <ion-button (click)="clickToRecgonise()">Recognise Face</ion-button>
+    </div> -->
+   
 
   
 </ion-content>

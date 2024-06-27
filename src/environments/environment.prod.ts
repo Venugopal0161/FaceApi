@@ -1,3 +1,7 @@
 export const environment = {
-  production: true
+  production: true,
+
+  connect_url: 'https://dev.springlogix.com/api/',
+  root_url: 'https://dev.springlogix.com/',
+
 };

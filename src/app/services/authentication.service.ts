@@ -14,7 +14,7 @@ export class AuthenticationService {
     let headers = new HttpHeaders();
     headers = headers.append('Content-Type', 'application/json');
     return this.http.post(
-      environment.root_url + 'authenticate',
+      environment?.root_url + 'authenticate',
       JSON.stringify(data),
       { headers }
     );
