@@ -54,16 +54,7 @@ this.presentLoading();
       })
       .subscribe(
         (res: any) => {
-          this.loadingController.dismiss();
-          
-          // roles present check
-          // let role_present = false;
-          // res.response.roles.forEach((role) => {
-          //   if (this.userRoles.indexOf(role) >= 0 && !role_present) {
-          //     role_present = true;
-          //   }
-          // });
-          // && role_present
+          this.loadingController.dismiss();          
           if (res.status.message === 'SUCCESS') {
             localStorage.setItem('token', res.response.token);
             const jwtPayload = JSON.parse(window.atob(res.response.token.split('.')[1]));

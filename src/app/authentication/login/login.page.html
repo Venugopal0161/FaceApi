@@ -1,49 +1,42 @@
 <ion-content class="ion-padding" fullscreen="true">
-
   <div style=" transform: translateY(26vh);">
+    <div class="logo-container">
+      <h1 class="animate__animated animate__fadeInUp">
+        <ion-text color="dark">Sign In</ion-text>
+      </h1>
+      <p class="animate__animated animate__fadeInUp">
+        <ion-text color="secondary">Login to your account.</ion-text>
+      </p>
+    </div>
 
-  
-
-  <div class="logo-container">
-    <h1 class="animate__animated animate__fadeInUp">
-      <ion-text color="dark">Sign In</ion-text>
-    </h1>
-    <p class="animate__animated animate__fadeInUp">
-      <ion-text color="secondary">Login to your account.</ion-text>
-    </p>
-  </div>
-
-  <div
-    style="
+    <div
+      style="
       display: flex;
       flex-direction: column;
       justify-content: center;
       margin-top: 40px;
       gap: 16px;
      
-    "
-  >
-    <!-- <ion-list> -->
-    <ion-item lines="none">
-      <ion-icon
-        color="medium"
-        style=" font-size: 21px; margin-right: 1px"
-        slot="start"
-        aria-hidden="true"
-        name="mail-outline"
-      ></ion-icon>
-      <ion-input
-        style="height: 56px"
-        class="input"
-        label=""
-        type="text"
-        placeholder="Username"
-        [(ngModel)]="username"
-      >
-      </ion-input>
-    </ion-item>
+    ">
+      <!-- <ion-list> -->
+      <ion-item lines="none">
+        <ion-icon
+          color="medium"
+          style=" font-size: 21px; margin-right: 1px"
+          slot="start"
+          aria-hidden="true"
+          name="mail-outline"></ion-icon>
+        <ion-input
+          style="height: 56px"
+          class="input"
+          label
+          type="text"
+          placeholder="Username"
+          [(ngModel)]="username">
+        </ion-input>
+      </ion-item>
 
-    <!-- <ion-item lines="none">
+      <!-- <ion-item lines="none">
       <ion-icon
         style="color: #9ca3af; font-size: 21px; margin-right: 19px"
         slot="start"
@@ -64,40 +57,45 @@
 
     </ion-item> -->
 
-    <ion-item lines="none">
-      <ion-label>
-        <ion-icon color="medium" style="font-size: 21px;margin-right: 9px" aria-hidden="true" name="lock-closed-outline"></ion-icon>
-      </ion-label>
-      <ion-input style="height: 56px;"
-      class="input" name="password" id="passwordField" [type]="showPassword?'text':'password'"
-        placeholder="Password" (keyup.enter)="login()"
-        [(ngModel)]="password">
-      </ion-input>
-      <ion-icon color="medium"  slot="end" [name]="showPassword ?'eye':'eye-off'" (click)="showPassword = !showPassword"
-      style="font-size: 21px;">
-      </ion-icon>
+      <ion-item lines="none">
+        <ion-label>
+          <ion-icon color="medium" style="font-size: 21px;margin-right: 9px"
+            aria-hidden="true" name="lock-closed-outline"></ion-icon>
+        </ion-label>
+        <ion-input style="height: 56px;"
+          class="input" name="password" id="passwordField"
+          [type]="showPassword?'text':'password'"
+          placeholder="Password" (keyup.enter)="login()"
+          [(ngModel)]="password">
+        </ion-input>
+        <ion-icon color="medium" slot="end"
+          [name]="showPassword ?'eye':'eye-off'"
+          (click)="showPassword = !showPassword"
+          style="font-size: 21px;">
+        </ion-icon>
       </ion-item>
 
-    <ion-button
-    color="secondary"
-      style="margin: auto; height: 56px; width: -webkit-fill-available"
-      expand="block"
-      class="ion-button-col"
-      (click)="login()"
-    >
-      Login
-    </ion-button>
+      <ion-button
+        color="secondary"
+        style="margin: auto; height: 56px; width: -webkit-fill-available"
+        expand="block"
+        class="ion-button-col"
+        (click)="login()">
+        Login
+      </ion-button>
 
-    <!-- </ion-list> -->
-    <ion-button color="dark" fill="clear" expand="block" class="ion-button-small ion-margin-top-medium" routerLink="/password-reset">
-      Forgot password?
-    </ion-button>
-    <ion-button color="dark" fill="clear" expand="block" class="ion-button-small ion-margin-top-medium" routerLink="/signup">
-      Sign up
-    </ion-button>
+      <!-- </ion-list> -->
+      <ion-button color="dark" fill="clear" expand="block"
+        class="ion-button-small ion-margin-top-medium"
+        routerLink="/password-reset">
+        Forgot password ?
+      </ion-button>
+      <!-- <ion-button color="dark" fill="clear" expand="block"
+        class="ion-button-small ion-margin-top-medium" routerLink="/signup">
+        Sign up
+      </ion-button> -->
 
+    </div>
 
   </div>
-
-</div>
 </ion-content>
