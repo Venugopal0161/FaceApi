@@ -8,6 +8,10 @@ ion-content {
     --background: #cddfeb;
 }
 
+ion-content {
+	--background: #cddfeb !important
+  }
+
 ion-input {
     background-color: #ffffff;
     --placeholder-color: #A0AEC0 !important;
