@@ -1,6 +1,10 @@
 ion-menu ion-content {
   --background: var(--ion-item-background, var(--ion-background-color, #fff));
+  position: absolute;
+
+
 }
+
 
 ion-menu.md ion-content {
   --padding-start: 8px;
