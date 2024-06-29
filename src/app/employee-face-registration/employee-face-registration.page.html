@@ -18,8 +18,8 @@
   <ion-select label="Employee" class="ion-margin-top animate__animated animate__fadeInUp" label-placement="floating"
     fill="outline" (ionChange)="changeInEmp($event)">
     <ion-select-option *ngFor="let c of empList"
-      [value]="c.employeeMaster.employeeCode">{{c.employeeMaster.employeeName}}
-      - [{{c.employeeMaster.employeeCode}}]</ion-select-option>
+      [value]="c.employeeCode">{{c.employeeName}}
+      - [{{c.employeeCode}}]</ion-select-option>
   </ion-select>
   <div class="ion-margin-top animate__animated animate__fadeInUp"  (click)="capturePhoto()">
     <img src="../../assets/Auth.svg" style="display: flex; margin: auto;" alt="employee image" *ngIf="!captureImg">

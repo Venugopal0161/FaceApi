@@ -37,14 +37,11 @@ export class EmployeeFaceRecognitionPage implements OnInit {
   ) {
   }
   ngOnInit(): void {
-    console.log('hfh');
-
     this.getFingerData();
     this.capturePhoto();
   }
   getFingerData() {
     this.httpGet.getMasterList('fingerdatas').subscribe((res: any) => {
-      console.log(res);
       this.employeeFingerData = res.response;
     },
       err => {
@@ -71,11 +68,6 @@ export class EmployeeFaceRecognitionPage implements OnInit {
     this.imageObj = image
     this.global.presentLoading();
     const blob = await this.uriToBlob(image.webPath);
-    // Resize and compress the image
-    // const compressedBlob = await this.resizeAndCompressImage(blob, 50);
-    console.log('Compressed blob:', blob);
-
-    // Convert compressed blob to base64 for storage or display
     await this.blobToBase64(blob);
     return image;
   }
@@ -89,10 +81,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
       reader.onloadend = () => {
         const base64data = reader.result as string;
         const base64 = base64data.replace(/^data:image\/\w+;base64,/, '');
-
-        // console.log('Base64 data:', base64data);
         this.clickedimageSrc = base64data
-        // this.base64String = base64;
         this.recgonise(base64data);
         resolve(base64data);
       };
@@ -102,9 +91,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
       reader.readAsDataURL(blob);
     });
   }
-
   recgonise = async (base64data) => {
-    console.log('came in run block venu');
     try {
       await Promise.all([
         faceapi.nets.ssdMobilenetv1.loadFromUri('/assets'),
@@ -118,12 +105,11 @@ export class EmployeeFaceRecognitionPage implements OnInit {
     }
     const refFace = await faceapi.fetchImage(base64data)
     let refFaceAiData = await faceapi.detectAllFaces(refFace).withFaceLandmarks().withFaceDescriptors()
-    console.log('your face captured venu', refFaceAiData);
+    console.log('your face captured', refFaceAiData);
     if (refFaceAiData.length >= 1) {
       let empImage: string;
       let listOfDistances = [];
       const header = 'data:image/';
-      console.log('starting to itterate venu');
       for (let emp of this.employeeFingerData) {
         empImage = header.concat(emp.fileType) + ';base64,' + emp.enrollTemplate
         const facesToCheck = await faceapi.fetchImage(empImage)
@@ -144,13 +130,9 @@ export class EmployeeFaceRecognitionPage implements OnInit {
 
         });
       }
-      console.log('itteration done venu');
-
-      console.log('listOfDistances venu', listOfDistances);
       // Step 2: Extract the scores
       const scores = listOfDistances.map(result => result.match.distance);
-      console.log('scores lessthan 6 venu', scores);
-
+      console.log('scores lessthan 6', scores);
       // Step 3: Find the minimum score
       const minScore = Math.min(...scores);
 
@@ -168,7 +150,6 @@ export class EmployeeFaceRecognitionPage implements OnInit {
         const { detection } = bestMatch.face;
         const emp = bestMatch.emp;
         const label = bestMatch.match.toString();
-        console.warn(label, emp.employeeName);
         this.toastService.presentToast('Success', `Match found for ${emp.employeeName} - ${emp.employeeCode}`, 'top', 'success', 7000);
         this.speak(`Heyy ${emp.employeeName}`);
         this.captureImg = true;
