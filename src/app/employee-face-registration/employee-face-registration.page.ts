@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { LoadingController } from '@ionic/angular';
-import Compressor from 'compressorjs';
 import { HttpGetService } from '../services/http-get.service';
 import { HttpPostService } from '../services/http-post.service';
 import { ToastService } from '../services/toast.service';
@@ -51,7 +50,7 @@ export class EmployeeFaceRegistrationPage implements OnInit {
 
   getEmployeesData(ev) {
     this.httpGet
-      .getMasterList('empswithpayroll?dept=' + ev.target.value + '&image=false')
+      .getMasterList('empFingerData?deptCode=' + ev.target.value)
       .subscribe((res: any) => {
         this.empList = res.response;
       },
@@ -112,30 +111,76 @@ export class EmployeeFaceRegistrationPage implements OnInit {
 
   resizeAndCompressImage(imageBlob: Blob, maxSizeKB: number): Promise<Blob> {
     return new Promise<Blob>((resolve, reject) => {
-      new Compressor(imageBlob, {
-        quality: 0.6, // Adjust quality (0 to 1)
-        maxWidth: 800, // Max width to control size
-        maxHeight: 600, // Max height to control size
-        success(result) {
-          resolve(result);
-        },
-        error(err) {
-          console.error('Image compression error:', err);
-          reject(err);
-        },
-      });
+      const reader = new FileReader();
+      reader.readAsDataURL(imageBlob);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+
+          // Set the max width and height
+          const maxWidth = 800;
+          const maxHeight = 600;
+          let width = img.width;
+          let height = img.height;
+
+          // Calculate the new dimensions
+          if (width > height) {
+            if (width > maxWidth) {
+              height = Math.round((height *= maxWidth / width));
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = Math.round((width *= maxHeight / height));
+              height = maxHeight;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Adjust the quality of the image
+          let quality = 0.7;
+          const step = 0.05;
+
+          const compress = () => {
+            canvas.toBlob(
+              (blob) => {
+                if (blob.size / 1024 <= maxSizeKB || quality <= 0.1) {
+                  resolve(blob);
+                } else {
+                  quality -= step;
+                  compress();
+                }
+              },
+              'image/jpeg',
+              quality
+            );
+          };
+
+          compress();
+        };
+      };
+      reader.onerror = (error) => {
+        reject('Error reading file: ' + error);
+      };
     });
   }
   async submit() {
     if (this.selectedEmpCode) {
       if (this.base64String) {
-        const selectedEmpRecord = this.empList.find(x => x.employeeMaster.employeeCode == this.selectedEmpCode);
+        const selectedEmpRecord = this.empList.find(x => x.employeeCode == this.selectedEmpCode);
         const obj = {
           base64: this.base64String,
-          empCode: selectedEmpRecord.employeeMaster.employeeCode,
-          empName: selectedEmpRecord.employeeMaster.employeeName,
-          "employeeCode": selectedEmpRecord.employeeMaster.employeeCode,
-          "employeeName": selectedEmpRecord.employeeMaster.employeeName,
+          empCode: selectedEmpRecord.employeeCode,
+          empName: selectedEmpRecord.employeeName,
+          "employeeCode": selectedEmpRecord.employeeCode,
+          "employeeName": selectedEmpRecord.employeeName,
           "enrollTemplate": this.base64String,
           "fileType": this.imageObj.format,
         }

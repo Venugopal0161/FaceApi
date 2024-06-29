@@ -6,15 +6,6 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-
-  <!-- <div id="cameraPreview" class="cameraPreview">
-
-
-  </div> -->
-
-<!-- <ion-img [src]="image" *ngIf="image && !cameraActive" style="height: 100%;"></ion-img> -->
-
- 
     <div class="shape" *ngIf="captureImg">
       <div id="oval"></div>
       <img *ngIf="captureImg" style="height: 100%;"
@@ -30,25 +21,7 @@
 </ion-content>
 
 <ion-footer class="animate__animated animate__fadeInUp ion-padding">
-  <!-- <ion-toolbar> -->
-    <!-- <div *ngIf="cameraActive">
-      <ion-row>
-        <ion-col size="6">
-          <ion-button color="danger"  expand="block" (click)="stopCamera()"> Cancel
-          </ion-button>
-        </ion-col>
-        <ion-col size="6">
-          <ion-button expand="block" color="secondary" (click)="captureImage()"> Capture
-          </ion-button>
-        </ion-col>
-      </ion-row>
-
-
-   </div> -->
-
-   <div *ngIf="!cameraActive">
-    <!-- <img [src]="image" *ngIf="image" style="height: 100%;"> -->
-
+    <div *ngIf="!cameraActive">
     <ion-row>
       <ion-col size="6">
         <ion-button color="danger"  expand="block" (click)="deleteImage()"> Delete
