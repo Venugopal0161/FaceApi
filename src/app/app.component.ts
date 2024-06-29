@@ -9,7 +9,8 @@ export class AppComponent {
   public appPages = [
     { title: 'Face Registration', url: '/registeremp', icon: 'person-add' },
     { title: 'Mark Attendance', url: '/recognition', icon: 'person' },
-    { title: 'All Employees', url: '/home', icon: 'heart' },
+    { title: 'All Employees', url: '/home', icon: 'people' },
+    
     // { title: 'Archived', url: '/folder/archived', icon: 'archive' },
     // { title: 'Trash', url: '/folder/trash', icon: 'trash' },
     // { title: 'Spam', url: '/folder/spam', icon: 'warning' },

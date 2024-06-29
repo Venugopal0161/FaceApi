@@ -70,21 +70,26 @@ export class EmployeeFaceRegistrationPage implements OnInit {
 
 
   async capturePhoto() {
-    const image = await Camera.getPhoto({
-      quality: 90,
-      allowEditing: false,
-      resultType: CameraResultType.Uri, // Capture as Blob
-      source: CameraSource.Camera,
-    });
-
-    this.imageObj = image
-    // Convert Uri to Blob
-    const blob = await this.uriToBlob(image.webPath);
-    // Resize and compress the image
-    const compressedBlob = await this.resizeAndCompressImage(blob, 2);
-    // Convert compressed blob to base64 for storage or display
-    await this.blobToBase64(compressedBlob);
-    return image;
+    if (this.selectedEmpCode) {
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.Uri, // Capture as Blob
+        source: CameraSource.Camera,
+      });
+  
+      this.imageObj = image
+      // Convert Uri to Blob
+      const blob = await this.uriToBlob(image.webPath);
+      // Resize and compress the image
+      const compressedBlob = await this.resizeAndCompressImage(blob, 2);
+      // Convert compressed blob to base64 for storage or display
+      await this.blobToBase64(compressedBlob);
+      return image;
+    } else {
+      this.toastService.presentToast('Error', 'Please select employee', 'top', 'danger', 2000);
+      return null; // Add a return statement here
+    }
   }
   async uriToBlob(uri: string): Promise<Blob> {
     const response = await fetch(uri);

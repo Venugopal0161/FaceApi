@@ -41,11 +41,13 @@ export class HomePage implements OnInit {
   }
 
   getFingerData() {
+    this.global.presentLoading();
     this.httpGet.getMasterList('fingerdatas').subscribe((res: any) => {
 
       res.response.forEach(element => {
         element.image = 'data:image/jpeg;base64,' + element.enrollTemplate;
       });
+      this.global.loadingController.dismiss();
 
       this.employeeFingerData = res.response;
       this.temp = [...this.employeeFingerData];
@@ -55,6 +57,7 @@ export class HomePage implements OnInit {
       
     },
       err => {
+        this.global.loadingController.dismiss();
         console.error(err);
       })
   }

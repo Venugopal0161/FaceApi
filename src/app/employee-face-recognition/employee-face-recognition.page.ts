@@ -38,6 +38,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
   }
   async ngOnInit() {
     try {
+      this.global.presentLoading();
       await Promise.all([
         faceapi.nets.ssdMobilenetv1.loadFromUri('/assets'),
         faceapi.nets.faceLandmark68Net.loadFromUri('/assets'),
@@ -45,7 +46,9 @@ export class EmployeeFaceRecognitionPage implements OnInit {
         faceapi.nets.ageGenderNet.loadFromUri('/assets'),
       ]);
       console.log('Models loaded successfully');
+      this.loadingController.dismiss();
     } catch (error) {
+      this.loadingController.dismiss();
       console.error('Error loading models:', error);
     }
     this.getFingerData();
