@@ -169,7 +169,8 @@ export class EmployeeFaceRecognitionPage implements OnInit {
         const emp = bestMatch.emp;
         const label = bestMatch.match.toString();
         console.warn(label, emp.employeeName);
-        this.toastService.presentToast('Success', `Match found for ${emp.employeeName} - ${emp.employeeCode}`, 'top', 'success', 7000);
+        // this.toastService.presentToast('Success', `Match found for ${emp.employeeName} - ${emp.employeeCode}`, 'top', 'success', 7000);
+        // this.presentAlert('Success', `Match found for ${emp.employeeName} - ${emp.employeeCode}`)
         this.speak(`Heyy ${emp.employeeName}`);
         this.captureImg = true;
         this.presentAlert('Success', `Match found for ${emp.employeeName} - ${emp.employeeCode}`)
@@ -178,16 +179,16 @@ export class EmployeeFaceRecognitionPage implements OnInit {
           let options = { label: "employee" };
         }
       } else if (minScoreCount === 0) {
-        this.toastService.presentToast('Error', 'No match found', 'top', 'danger', 7000);
+        // this.toastService.presentToast('Error', 'No match found', 'top', 'danger', 7000);
         this.speak('Sorry, I cannot recognize you');
-        this.presentAlert('Error', 'No match found');
+        this.presentAlertForError('Error', 'No match found');
       }
     }
     else {
-      this.presentAlert('Error', 'Face not recognised properly')
+      this.presentAlertForError('Error', 'Face not recognised properly')
       this.loadingController.dismiss();
       // this.deleteImage();
-      this.toastService.presentToast('Error', 'Face not recognised properly', 'top', 'danger', 7000)
+      // this.toastService.presentToast('Error', 'Face not recognised properly', 'top', 'danger', 7000)
     }
 
   }
@@ -211,6 +212,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
     this.cameraActive = true;
     this.imageObj = null;
     this.capturePhoto();
+    // this.alertController.dismiss();
   }
   async presentAlert(header, msg) {
     const alert = await this.alertController.create({
@@ -231,5 +233,26 @@ export class EmployeeFaceRecognitionPage implements OnInit {
 
     const { role } = await alert.onDidDismiss();
   }
+  async presentAlertForError(header, msg) {
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class-danger',
+      header: header,
+      message: msg,
+      buttons: [
+        {
+          text: 'Ok',
+          handler: () => {
+            this.deleteImage();
+          }
+        }
+      ],
+    });
+
+    await alert.present();
+
+    const { role } = await alert.onDidDismiss();
+  }
+
+ 
 
 }

@@ -1,3 +1,51 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-menu-button slot="start"></ion-menu-button>
+
+    <ion-title>All Employees</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content class="ion-padding">
+  <ion-searchbar (keyup)="updateFilter($event)"   placeholder="Search by employee name & code"></ion-searchbar>
+  <ion-list>
+    <ion-item *ngFor="let emp of employeeFingerData" >
+      <ion-avatar slot="start" (click)="viewImage(emp.image)">
+        <img src="{{emp.image}}">
+      </ion-avatar>
+      <ion-label>
+        <h2>{{emp.employeeName}}</h2>
+        <p>{{emp.employeeCode}}</p>
+      </ion-label>
+      <ion-icon slot="end" (click)="confirm(emp)" color="danger" name="trash"></ion-icon>
+    </ion-item>
+  </ion-list>
+
+  <!-- <ion-grid>
+    <ion-row>
+      <ion-col size-xl="3" size-lg="4" size-md="6" size-xs="6" *ngFor="let c of employeeFingerData">
+        <ion-card>
+          <img [src]="c.image" />
+          <ion-card-header>
+            <ion-card-subtitle>{{c.employeeName}}</ion-card-subtitle>
+            <ion-card-title>{{c.employeeCode}}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid> -->
+
+</ion-content>
+
+
+
+
+
+
+
 <!-- <ion-content>
   <swiper class="swiper-welcome" #swiper [config]="config" (slideChange)="swiperSlideChanged($event)"
     (reachEnd)="onLastSlide()">

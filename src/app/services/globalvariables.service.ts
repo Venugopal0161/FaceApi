@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoadingController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { HttpGetService } from './http-get.service';
 import { UtilService } from './util.service';
 
@@ -13,6 +13,7 @@ export class GlobalvariablesService {
   constructor(private http: HttpClient,
     private utilServ: UtilService,
     private router: Router,
+    private alertController: AlertController,
     public loadingController: LoadingController,
     private httpGet: HttpGetService) { }
 
@@ -42,7 +43,7 @@ export class GlobalvariablesService {
   async presentLoading() {
     const loading = await this.loadingController.create({
       cssClass: 'my-custom-class',
-      message: 'Please be patience...',
+      message: 'Please wait...',
       // duration: 2000
     });
     await loading.present();
@@ -51,5 +52,15 @@ export class GlobalvariablesService {
   }
 
   
+  showAlert(message: string, header, inputs , subHead,buttonArray) {
+    this.alertController.create({
+      header: header ? header : 'Alert',
+      subHeader:subHead,
+      message: message,
+      inputs: inputs ? inputs : [],
+      buttons: buttonArray ? buttonArray : ['OK']
+    })
+    .then(alertEl => alertEl.present());
+  }
 
 }
