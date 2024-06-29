@@ -8,7 +8,7 @@ import { HttpPostService } from '../services/http-post.service';
 
 import { HttpClient } from '@angular/common/http';
 import '@capacitor-community/camera-preview';
-import { LoadingController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { GlobalvariablesService } from '../services/globalvariables.service';
 import { ToastService } from '../services/toast.service';
 @Component({
@@ -30,6 +30,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
     private httpGet: HttpGetService,
     private httpPost: HttpPostService,
     private http: HttpClient,
+    private alertController: AlertController,
     private global: GlobalvariablesService,
     public loadingController: LoadingController,
     public toastService: ToastService,
@@ -68,6 +69,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
     });
 
     this.imageObj = image
+    this.global.presentLoading();
     const blob = await this.uriToBlob(image.webPath);
     // Resize and compress the image
     // const compressedBlob = await this.resizeAndCompressImage(blob, 50);
@@ -103,8 +105,6 @@ export class EmployeeFaceRecognitionPage implements OnInit {
 
   recgonise = async (base64data) => {
     console.log('came in run block venu');
-    this.global.presentLoading();
-
     try {
       await Promise.all([
         faceapi.nets.ssdMobilenetv1.loadFromUri('/assets'),
@@ -114,7 +114,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
       ]);
       console.log('Models loaded successfully>>2');
     } catch (error) {
-      console.error('Error loading models2:', error);
+      console.error('Error loading models:', error);
     }
     const refFace = await faceapi.fetchImage(base64data)
     let refFaceAiData = await faceapi.detectAllFaces(refFace).withFaceLandmarks().withFaceDescriptors()
@@ -124,15 +124,11 @@ export class EmployeeFaceRecognitionPage implements OnInit {
       let listOfDistances = [];
       const header = 'data:image/';
       console.log('starting to itterate venu');
-
       for (let emp of this.employeeFingerData) {
         empImage = header.concat(emp.fileType) + ';base64,' + emp.enrollTemplate
-
         const facesToCheck = await faceapi.fetchImage(empImage)
         let facesToCheckAiData = await faceapi.detectAllFaces(facesToCheck).withFaceLandmarks().withFaceDescriptors()
-
         let faceMatcher = new faceapi.FaceMatcher(refFaceAiData);
-
         facesToCheckAiData = faceapi.resizeResults(facesToCheckAiData, facesToCheck)
         const matchResults = facesToCheckAiData.map(face => {
           const { detection, descriptor } = face;
@@ -164,7 +160,6 @@ export class EmployeeFaceRecognitionPage implements OnInit {
 
       const minScoreCount = scores.filter(score => score === minScore && score < 0.51).length;
       console.log('minScoreCount', minScoreCount);
-
       this.loadingController.dismiss();
 
       // Step 5: Proceed if there is only one least value
@@ -177,7 +172,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
         this.toastService.presentToast('Success', `Match found for ${emp.employeeName} - ${emp.employeeCode}`, 'top', 'success', 7000);
         this.speak(`Heyy ${emp.employeeName}`);
         this.captureImg = true;
-        this.deleteImage();
+        this.presentAlert('Success', `Match found for ${emp.employeeName} - ${emp.employeeCode}`)
         // Ensure the label is not "unknown"
         if (!label.includes("unknown")) {
           let options = { label: "employee" };
@@ -185,17 +180,15 @@ export class EmployeeFaceRecognitionPage implements OnInit {
       } else if (minScoreCount === 0) {
         this.toastService.presentToast('Error', 'No match found', 'top', 'danger', 7000);
         this.speak('Sorry, I cannot recognize you');
+        this.presentAlert('Error', 'No match found');
       }
-      this.deleteImage();
     }
     else {
-      console.log('face not recognised p');
-
+      this.presentAlert('Error', 'Face not recognised properly')
       this.loadingController.dismiss();
       // this.deleteImage();
-      this.toastService.presentToast('Error', 'face not recognised properly', 'top', 'danger', 7000)
+      this.toastService.presentToast('Error', 'Face not recognised properly', 'top', 'danger', 7000)
     }
-    this.deleteImage();
 
   }
   speak(text: string): void {
@@ -218,6 +211,25 @@ export class EmployeeFaceRecognitionPage implements OnInit {
     this.cameraActive = true;
     this.imageObj = null;
     this.capturePhoto();
+  }
+  async presentAlert(header, msg) {
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: header,
+      message: msg,
+      buttons: [
+        {
+          text: 'Ok',
+          handler: () => {
+            this.deleteImage();
+          }
+        }
+      ],
+    });
+
+    await alert.present();
+
+    const { role } = await alert.onDidDismiss();
   }
 
 }
