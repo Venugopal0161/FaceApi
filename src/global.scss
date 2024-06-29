@@ -42,3 +42,39 @@
 ion-button{
     text-transform: none;
 }
+
+.my-custom-class {
+    .alert-wrapper {
+        .alert-head {
+            background-color: var(--ion-color-primary);
+
+            h2 {
+                color: white;
+                text-align: center;
+                font-weight: bold
+            }
+        }
+
+        .alert-message {
+            margin-top: 35px;
+        }
+    }
+}
+
+.my-custom-class-warning {
+    .alert-wrapper {
+        .alert-head {
+            background-color: var(--ion-color-danger);
+
+            h2 {
+                color: white;
+                text-align: center;
+                font-weight: bold
+            }
+        }
+
+        .alert-message {
+            margin-top: 35px;
+        }
+    }
+}
