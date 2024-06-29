@@ -1,16 +1,16 @@
 import {
-    HttpEvent,
-    HttpHandler,
-    HttpInterceptor,
-    HttpRequest,
-    HttpResponse
-  } from '@angular/common/http';
-  import { Injectable } from '@angular/core';
-  import { Router } from '@angular/router';
-  import { Observable, tap } from 'rxjs';
+  HttpEvent,
+  HttpHandler,
+  HttpInterceptor,
+  HttpRequest,
+  HttpResponse
+} from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { Observable, tap } from 'rxjs';
 
-  import { UtilService } from './util.service';
 import { AlertController } from '@ionic/angular';
+import { UtilService } from './util.service';
   @Injectable()
   export class MyHttpInterceptor implements HttpInterceptor {
     yesExpired = false;
@@ -152,7 +152,7 @@ import { AlertController } from '@ionic/angular';
       localStorage.removeItem('token');
       localStorage.removeItem('branch');
       localStorage.removeItem('branchCode');
-      this.router.navigateByUrl('/auth');
+      this.router.navigateByUrl('/login');
     }
   
   }
