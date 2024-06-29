@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
-import { HttpGetService } from './http-get.service';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { UtilService } from './util.service';
 import { LoadingController } from '@ionic/angular';
+import { HttpGetService } from './http-get.service';
+import { UtilService } from './util.service';
 
 @Injectable({
   providedIn: 'root'
@@ -42,7 +42,7 @@ export class GlobalvariablesService {
   async presentLoading() {
     const loading = await this.loadingController.create({
       cssClass: 'my-custom-class',
-      message: 'Please be patient...',
+      message: 'Please be patience...',
       // duration: 2000
     });
     await loading.present();

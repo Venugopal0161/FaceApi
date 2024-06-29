@@ -3,5 +3,4 @@ export const environment = {
 
   connect_url: 'https://dev.springlogix.com/api/',
   root_url: 'https://dev.springlogix.com/',
-
 };

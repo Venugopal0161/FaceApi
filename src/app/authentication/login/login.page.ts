@@ -12,8 +12,8 @@ import { GlobalvariablesService } from 'src/app/services/globalvariables.service
 })
 export class LoginPage implements OnInit {
 
-  username = '';
-  password = '';
+  username = 'admin';
+  password = 'welcome1@';
   errorMessage = '';
   showPassword = false;
    logInForm: FormGroup ;
