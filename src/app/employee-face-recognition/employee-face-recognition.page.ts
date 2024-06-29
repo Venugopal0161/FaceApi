@@ -36,7 +36,18 @@ export class EmployeeFaceRecognitionPage implements OnInit {
     public toastService: ToastService,
   ) {
   }
-  ngOnInit(): void {
+  async ngOnInit() {
+    try {
+      await Promise.all([
+        faceapi.nets.ssdMobilenetv1.loadFromUri('/assets'),
+        faceapi.nets.faceLandmark68Net.loadFromUri('/assets'),
+        faceapi.nets.faceRecognitionNet.loadFromUri('/assets'),
+        faceapi.nets.ageGenderNet.loadFromUri('/assets'),
+      ]);
+      console.log('Models loaded successfully');
+    } catch (error) {
+      console.error('Error loading models:', error);
+    }
     this.getFingerData();
     this.capturePhoto();
   }
@@ -92,17 +103,6 @@ export class EmployeeFaceRecognitionPage implements OnInit {
     });
   }
   recgonise = async (base64data) => {
-    try {
-      await Promise.all([
-        faceapi.nets.ssdMobilenetv1.loadFromUri('/assets'),
-        faceapi.nets.faceLandmark68Net.loadFromUri('/assets'),
-        faceapi.nets.faceRecognitionNet.loadFromUri('/assets'),
-        faceapi.nets.ageGenderNet.loadFromUri('/assets'),
-      ]);
-      console.log('Models loaded successfully>>2');
-    } catch (error) {
-      console.error('Error loading models:', error);
-    }
     const refFace = await faceapi.fetchImage(base64data)
     let refFaceAiData = await faceapi.detectAllFaces(refFace).withFaceLandmarks().withFaceDescriptors()
     console.log('your face captured', refFaceAiData);
