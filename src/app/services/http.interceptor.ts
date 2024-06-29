@@ -152,7 +152,7 @@ import { AlertController } from '@ionic/angular';
       localStorage.removeItem('token');
       localStorage.removeItem('branch');
       localStorage.removeItem('branchCode');
-      this.router.navigateByUrl('/auth');
+      this.router.navigateByUrl('/login');
     }
   
   }
