@@ -23,10 +23,10 @@
             <ion-label>{{ label }}</ion-label>
           </ion-item> -->
            <ion-menu-toggle auto-hide="false">
-            <ion-item routerDirection="root" routerLink="/login" lines="none" detail="false" routerLinkActive="selected">
+            <ion-item routerDirection="root" routerLink="/login" lines="none" detail="false" routerLinkActive="selected" (click)="logout()">
               <!-- <ion-icon aria-hidden="true" slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon> -->
               <ion-icon name="log-out" aria-hidden="true" slot="start"></ion-icon>
-              <ion-label (click)="logout()" >Logout</ion-label>
+              <ion-label  >Logout</ion-label>
             </ion-item>
           </ion-menu-toggle>
         </ion-list>

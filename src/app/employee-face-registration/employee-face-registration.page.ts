@@ -82,7 +82,7 @@ export class EmployeeFaceRegistrationPage implements OnInit {
     // Convert Uri to Blob
     const blob = await this.uriToBlob(image.webPath);
     // Resize and compress the image
-    const compressedBlob = await this.resizeAndCompressImage(blob, 50);
+    const compressedBlob = await this.resizeAndCompressImage(blob, 2);
     // Convert compressed blob to base64 for storage or display
     await this.blobToBase64(compressedBlob);
     return image;

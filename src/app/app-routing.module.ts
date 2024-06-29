@@ -26,6 +26,9 @@ const routes: Routes = [
     path: 'recognition',
     loadChildren: () => import('./employee-face-recognition/employee-face-recognition.module').then(m => m.EmployeeFaceRecognitionPageModule), canActivate: [AuthGuard]
   },
+
+
+
 ];
 
 @NgModule({
