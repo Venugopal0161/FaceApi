@@ -10,6 +10,7 @@ export class AppComponent {
     { title: 'Face Registration', url: '/registeremp', icon: 'person-add' },
     { title: 'Mark Attendance', url: '/recognition', icon: 'person' },
     { title: 'All Employees', url: '/home', icon: 'people' },
+    { title: 'Attendance Logs', url: '/attendance-logs', icon: 'folder' },
     
     // { title: 'Archived', url: '/folder/archived', icon: 'archive' },
     // { title: 'Trash', url: '/folder/trash', icon: 'trash' },

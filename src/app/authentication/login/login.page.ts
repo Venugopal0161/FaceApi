@@ -82,8 +82,6 @@ this.presentLoading();
               // this.loadingController.dismiss();
               console.error('Error loading models:', error);
             }
-            this.router.navigate(['/registeremp']);
-
             // home
           } 
         },
