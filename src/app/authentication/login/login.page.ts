@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { AuthenticationService } from 'src/app/services/authentication.service';
+import { FaceRecognitionService } from 'src/app/services/face-recognization.service';
 import { GlobalvariablesService } from 'src/app/services/globalvariables.service';
 
 @Component({
@@ -23,8 +24,10 @@ export class LoginPage implements OnInit {
     private authenticationService: AuthenticationService,
     private router: Router,
     private fb: FormBuilder,
-    private alertController: AlertController,
+    private faceRecognitionService: FaceRecognitionService,
+    private global: GlobalvariablesService,
     public loadingController: LoadingController,
+    private alertController: AlertController,
 
   ) { }
 
@@ -42,7 +45,7 @@ export class LoginPage implements OnInit {
     // this.logInForm.controls['password'].setValue('welcome1@')
   }
 
-  login() {
+  async login() {
     this.errorMessage = '';
 this.presentLoading();
     this.authenticationService
@@ -56,6 +59,7 @@ this.presentLoading();
         (res: any) => {
           this.loadingController.dismiss();          
           if (res.status.message === 'SUCCESS') {
+
             localStorage.setItem('token', res.response.token);
             const jwtPayload = JSON.parse(window.atob(res.response.token.split('.')[1]));
 
@@ -69,7 +73,17 @@ this.presentLoading();
             // this.globalServ.setAppvariables(null);
             // role_present = false;
             localStorage.setItem('user-data', JSON.stringify(res.response));
+            try {
+              // this.global.presentLoading();
+              this.faceRecognitionService.loadModels();
+              console.log('files loaded  from login');
+              // this.loadingController.dismiss();
+            } catch (error) {
+              // this.loadingController.dismiss();
+              console.error('Error loading models:', error);
+            }
             this.router.navigate(['/registeremp']);
+
             // home
           } 
         },

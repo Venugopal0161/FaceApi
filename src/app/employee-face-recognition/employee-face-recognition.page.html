@@ -12,8 +12,8 @@
         [src]="clickedimageSrc" />
     </div>
     <div style="margin-top: 2%; display: flex;
-      justify-content: center;">
-      <!-- <ion-button (click)="capturePhoto()">Recognise Face</ion-button> -->
+      justify-content: center;" *ngIf="captureImg">
+      <ion-button (click)="capturePhoto()">Click to Capture Face</ion-button>
     </div>
    
 

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { LoadingController } from '@ionic/angular';
 import { HttpGetService } from '../services/http-get.service';
 import { HttpPostService } from '../services/http-post.service';
 import { ToastService } from '../services/toast.service';
@@ -23,8 +22,6 @@ export class EmployeeFaceRegistrationPage implements OnInit {
     private httpGet: HttpGetService,
     private httpPost: HttpPostService,
     private toastService: ToastService,
-    private loadingController: LoadingController,
-
   ) { }
 
   ngOnInit() {
@@ -82,7 +79,7 @@ export class EmployeeFaceRegistrationPage implements OnInit {
       // Convert Uri to Blob
       const blob = await this.uriToBlob(image.webPath);
       // Resize and compress the image
-      const compressedBlob = await this.resizeAndCompressImage(blob, 2);
+      const compressedBlob = await this.resizeAndCompressImage(blob, 50);
       // Convert compressed blob to base64 for storage or display
       await this.blobToBase64(compressedBlob);
       return image;
@@ -179,6 +176,8 @@ export class EmployeeFaceRegistrationPage implements OnInit {
   async submit() {
     if (this.selectedEmpCode) {
       if (this.base64String) {
+        this.toastService.presentToast('Info', 'Please Wait....', 'bottom', 'medium', 2000);
+
         const selectedEmpRecord = this.empList.find(x => x.employeeCode == this.selectedEmpCode);
         const obj = {
           base64: this.base64String,
