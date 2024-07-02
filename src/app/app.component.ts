@@ -12,6 +12,7 @@ export class AppComponent {
     { title: 'All Employees', url: '/home', icon: 'people' },
     { title: 'Mark In', url: '/mark-in', icon: 'people' },
     { title: 'Mark Out', url: '/mark-out', icon: 'people' },
+    { title: 'Attendance Logs', url: '/attendance-logs', icon: 'folder' },
     
     // { title: 'Archived', url: '/folder/archived', icon: 'archive' },
     // { title: 'Trash', url: '/folder/trash', icon: 'trash' },

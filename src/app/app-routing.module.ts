@@ -34,6 +34,12 @@ const routes: Routes = [
     path: 'mark-out',
     loadChildren: () => import('./mark-out/mark-out.module').then( m => m.MarkOutPageModule)
   },
+  {
+    path: 'attendance-logs',
+    loadChildren: () => import('./attendance-logs/attendance-logs.module').then(m => m.AttendanceLogsPageModule)
+  },
+
+
 
 
 

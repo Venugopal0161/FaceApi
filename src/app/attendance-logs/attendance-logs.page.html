@@ -1,0 +1,71 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-menu-button slot="start"></ion-menu-button>
+    <ion-title>Attendance Logs</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+<ion-list class="item-card-list animate__animated animate__fadeIn" *ngIf="!content_loaded">
+      <ion-item lines="none" color="light" *ngFor="let i of [].constructor(12);">
+        <ion-avatar slot="start">
+          <ion-skeleton-text animated></ion-skeleton-text>
+        </ion-avatar>
+        <ion-label>
+          <h3><ion-skeleton-text animated style="width: 50%"></ion-skeleton-text></h3>
+          <p><ion-skeleton-text animated style="width: 30%"></ion-skeleton-text></p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+    
+<div *ngIf="content_loaded" >
+  <div *ngIf="records.length > 0; else noRecords">
+  <ion-list>
+    <ion-item *ngFor="let record of records" >
+        <ion-avatar slot="start" (click)="viewImage(record.empImage)">
+          <img src="{{record.empImage}}">
+        </ion-avatar>
+         <ion-col>
+        <ion-label>
+          <h3> {{record.timesheetdto.employeeName}} - ({{record.timesheetdto.employeeCode }})</h3>
+          <p> <b>Date : </b> {{record.timesheetdto.dateCode }} <span style="float: inline-end;"><b> Time :</b> {{record.timesheetdto.outTime }}</span></p>
+        </ion-label>
+      </ion-col>
+
+      <ion-col size="3"  >
+      <ion-chip color="success" *ngIf="record.type === 'IN'" style="float: inline-end;" >{{record.type}}</ion-chip>
+      <ion-chip color="danger" *ngIf="record.type === 'OUT'" style="float: inline-end;">{{record.type}}</ion-chip>
+      </ion-col>
+    </ion-item>
+  </ion-list>
+
+    <!-- <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Employee Code</th>
+          <th>Employee Name</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let record of records">
+          <td>{{record.timesheetdto.dateCode }}</td>
+          <td>{{ record.timesheetdto.employeeCode }}</td>
+          <td>{{ record.timesheetdto.employeeName }}</td>
+          <td>{{ record.timesheetdto.outDate }}
+            <span style="display: block;">
+              {{ record.timesheetdto.outTime }}
+            </span>
+          </td>
+          <td>{{ record.status }}</td>
+        </tr>
+      </tbody>
+    </table>-->
+  </div> 
+  <ng-template #noRecords>
+    <p>No records found.</p>
+  </ng-template>
+</div>
+
+</ion-content>

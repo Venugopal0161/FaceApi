@@ -17,9 +17,7 @@ export class LoginGuard implements CanActivate {
 
   async canActivate(): Promise<boolean> {
     if (localStorage.getItem('user-data')) {
-
       await this.faceRecognitionService.loadModels();
-      this.router.navigate(['/registeremp']);
       return false;
     }
     return true;

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
 import * as faceapi from 'face-api.js';
 import { HttpGetService } from './http-get.service';
@@ -14,6 +15,7 @@ export class FaceRecognitionService {
     constructor(
         private httpGet: HttpGetService,
         public loadingController: LoadingController,
+        private router: Router
 
     ) {
 
@@ -48,6 +50,7 @@ export class FaceRecognitionService {
             }
             console.log('listOfFaceData', this.listOfFaceData);
             await this.dismissLoading();
+            this.router.navigate(['/recognition']);
 
         },
             err => {
