@@ -26,6 +26,14 @@ const routes: Routes = [
     path: 'recognition',
     loadChildren: () => import('./employee-face-recognition/employee-face-recognition.module').then(m => m.EmployeeFaceRecognitionPageModule), canActivate: [AuthGuard]
   },
+  {
+    path: 'mark-in',
+    loadChildren: () => import('./mark-in/mark-in.module').then( m => m.MarkInPageModule)
+  },
+  {
+    path: 'mark-out',
+    loadChildren: () => import('./mark-out/mark-out.module').then( m => m.MarkOutPageModule)
+  },
 
 
 
