@@ -28,6 +28,8 @@ export class EmployeeFaceRecognitionPage implements OnInit, ViewWillEnter {
   torchActive = false;
   dbName = 'EmployeeDB';
   storeName = 'EmployeeRecords';
+  deptList: any[];
+  empList: any;
   constructor(
     private httpGet: HttpGetService,
     private httpPost: HttpPostService,
@@ -40,11 +42,41 @@ export class EmployeeFaceRecognitionPage implements OnInit, ViewWillEnter {
   ) {
   }
   ionViewWillEnter() {
-    this.capturePhoto();
+    // this.capturePhoto();
   }
 
   async ngOnInit() {
-    this.capturePhoto();
+    this.getDeptList();
+    // this.capturePhoto();
+  }
+
+  getDeptList() {
+    this.httpGet.getMasterList('depts/active').subscribe((res: any) => {
+      let dpt = [];
+      if (res.response.length > 0) {
+        dpt = res.response;
+        dpt.unshift({
+          deptCode: 'ALL',
+          deptName: 'ALL'
+        })
+        this.deptList = dpt;
+      }
+    },
+      err => {
+        console.error(err);
+
+      })
+  }
+
+  getEmployeesData(ev) {
+    this.httpGet
+      .getMasterList('empFingerData?deptCode=' + ev.target.value)
+      .subscribe((res: any) => {
+        this.empList = res.response;
+      },
+        err => {
+          console.error(err);
+        })
   }
 
   async capturePhoto() {

@@ -6,5 +6,13 @@
 </ion-header>
 
 <ion-content class="ion-padding">
- 
+ <div class="shape" *ngIf="captureImg">
+      <div id="oval"></div>
+      <img *ngIf="captureImg" style="height: 100%;"
+        [src]="clickedimageSrc" />
+    </div>
+    <div style="margin-top: 2%; display: flex;
+      justify-content: center;" *ngIf="captureImg">
+      <ion-button (click)="capturePhoto()">Click to Capture Face</ion-button>
+    </div>  
 </ion-content>

@@ -1,13 +1,18 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>mark-out</ion-title>
+    <ion-menu-button slot="start"></ion-menu-button>
+    <ion-title>Mark Out</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">mark-out</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="shape" *ngIf="captureImg">
+      <div id="oval"></div>
+      <img *ngIf="captureImg" style="height: 100%;"
+        [src]="clickedimageSrc" />
+    </div>
+    <div style="margin-top: 2%; display: flex;
+      justify-content: center;" *ngIf="captureImg">
+      <ion-button (click)="capturePhoto()">Click to Capture Face</ion-button>
+    </div>  
 </ion-content>
