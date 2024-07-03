@@ -65,6 +65,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
       })
   }
   async capturePhoto() {
+    if (this.selectedEmployee) {
     this.captureImg = false;
     this.clickedimageSrc = null;
     this.imageObj = null;
@@ -91,7 +92,8 @@ export class EmployeeFaceRecognitionPage implements OnInit {
         this.cameraActive = false;
       }
     }
-    return null;
+  }
+  return null;
   }
   async uriToBlob(uri: string): Promise<Blob> {
     const response = await fetch(uri);
