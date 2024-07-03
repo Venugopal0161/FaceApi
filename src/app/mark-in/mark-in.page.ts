@@ -1,20 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { AlertController, LoadingController } from '@ionic/angular';
+import { AlertController, LoadingController, ViewWillLeave } from '@ionic/angular';
+import * as faceapi from 'face-api.js';
 import { FaceRecognitionService } from '../services/face-recognization.service';
 import { GlobalvariablesService } from '../services/globalvariables.service';
-import { HttpGetService } from '../services/http-get.service';
 import { HttpPostService } from '../services/http-post.service';
 import { ToastService } from '../services/toast.service';
-import * as faceapi from 'face-api.js';
 @Component({
   selector: 'app-mark-in',
   templateUrl: './mark-in.page.html',
   styleUrls: ['./mark-in.page.scss'],
 })
-export class MarkInPage implements OnInit {
-
+export class MarkInPage implements OnInit, ViewWillLeave {
+  alert: any;
   employeeFingerData = [];
   captureImg = false;
   clickedimageSrc: string;
@@ -22,10 +21,7 @@ export class MarkInPage implements OnInit {
   image = null;
   cameraActive = false;
   torchActive = false;
-  dbName = 'EmployeeDB';
-  storeName = 'EmployeeRecords';
   constructor(
-    private httpGet: HttpGetService,
     private httpPost: HttpPostService,
     private router: Router,
     private alertController: AlertController,
@@ -35,9 +31,7 @@ export class MarkInPage implements OnInit {
     public toastService: ToastService,
   ) {
   }
-  ionViewWillEnter() {
-    this.capturePhoto();
-  }
+
 
   async ngOnInit() {
     this.capturePhoto();
@@ -56,13 +50,12 @@ export class MarkInPage implements OnInit {
       });
       this.cameraActive = true;
       this.imageObj = image;
-    this.global.presentLoading();
-    const blob = await this.uriToBlob(image.webPath);
-    await this.blobToBase64(blob);
-      return image;
+      this.global.presentLoading();
+      const blob = await this.uriToBlob(image.webPath);
+      await this.blobToBase64(blob);
     } catch (error) {
       if (error.message === 'User cancelled photos app') {
-        this.router.navigateByUrl('/recognition');
+        this.router.navigateByUrl('/mark-in');
         this.cameraActive = false;
 
         // Optionally show a message to the user
@@ -70,8 +63,6 @@ export class MarkInPage implements OnInit {
         // Handle other errors
         console.error('Error capturing photo:', error);
         this.cameraActive = false;
-        // Optionally show a different message to the user
-        // this.presentAlert('Photo Capture Error', 'An error occurred while capturing the photo.');
       }
     }
     return null;
@@ -124,22 +115,9 @@ export class MarkInPage implements OnInit {
       let empImage: string;
       let listOfDistances = [];
       const facedata = this.faceServ.listOfFaceData;
-
-      // const header = 'data:image/';
-      // for (let emp of this.employeeFingerData) {
-      // empImage = header.concat(emp.fileType) + ';base64,' + emp.enrollTemplate
-
-
-      // const facesToCheck = await faceapi.fetchImage(empImage);
-      // let facesToCheckAiData = await faceapi.detectAllFaces(facesToCheck).withFaceLandmarks().withFaceDescriptors()
-      // console.warn('facesToCheckAiData', facesToCheckAiData);
-
-      // facesToCheckAiData = faceapi.resizeResults(facesToCheckAiData, facesToCheck)
-      // console.log('facesToCheckAiData >>>>>>', facesToCheckAiData);
-
       console.log('facedata', facedata);
 
-        let faceMatcher = new faceapi.FaceMatcher(refFaceAiData);
+      let faceMatcher = new faceapi.FaceMatcher(refFaceAiData);
       facedata.forEach(element => {
         const matchResults = element.facesToCheckAiData.map(face => {
           const { detection, descriptor } = face;
@@ -161,15 +139,9 @@ export class MarkInPage implements OnInit {
       // console.log('scores lessthan 6', scores);
       // Step 3: Find the minimum score
       const minScore = Math.min(...scores);
-      console.log('minScore', scores, minScore);
-
       let val: number
       val = Number(minScore.toFixed(2));
-
       // Step 4: Count occurrences of the minimum score
-      // const mc = scores.filter(score => score < 0.51).length;
-      // console.log('mc count', mc);
-
       const minScoreCount = scores.filter(score => score === minScore && score <= 0.49).length;
       console.log('minScoreCount', minScoreCount);
       this.loadingController.dismiss();
@@ -181,48 +153,48 @@ export class MarkInPage implements OnInit {
         const label = bestMatch.match.toString();
         this.speak(`Heyy ${emp.employeeName}`);
         this.captureImg = true;
-        this.presentAlert('Success', `Match found for ${emp.employeeName} - ${emp.employeeCode} with ${val}`)
-        await this.storeRecord({
-          "timesheetdto": {
-            "dateCode": getTimeAndDate.date,
-            "employeeCode": emp.employeeCode,
-            "employeeName": emp.employeeName,
-            "outTime": getTimeAndDate.time,
-            'outDevice': localStorage.getItem('uuid'),
-            "outDate": getTimeAndDate.date,
-          },
-          "type": "IN",
-          fileName: emp.employeeCode + getTimeAndDate.time + getTimeAndDate.date,
-          fileType: this.imageObj.format,
-          image: base64String,
-          // locationLog: {
-          //   "latitude": this.latCode,
-          //   "longitude": this.longCode,
-          //   "deviceId": localStorage.getItem('uuid')
-          // }
-        });
-
-
-        this.processRecords();
-
-        // Ensure the label is not "unknown"
-        if (!label.includes("unknown")) {
-          let options = { label: "employee" };
-        }
+        this.presentAlert('Success', `Match found for ${emp.employeeName} - ${emp.employeeCode} with ${val} accuracy`)
+        this.SendDataToApi(emp, base64String, val);
       } else if (minScoreCount === 0) {
-        // this.toastService.presentToast('Error', 'No match found', 'top', 'danger', 7000);
         this.speak('Sorry, I cannot recognize you');
-        this.presentAlertForError('Error', `No match found and got value ${val}`);
+        this.presentAlertForError('Error', `No match found and got value ${val} accuracy`);
       }
     }
     else {
       this.presentAlertForError('Error', `Face not recognised properly`)
       this.loadingController.dismiss();
-      // this.deleteImage();
-      // this.toastService.presentToast('Error', 'Face not recognised properly', 'top', 'danger', 7000)
     }
-
   }
+  SendDataToApi(emp, base64String, val) {
+    const getTimeAndDate = this.getDateAndTime();
+    const obj = {
+      "timesheetdto": {
+        "dateCode": getTimeAndDate.date,
+        "employeeCode": emp.employeeCode,
+        "employeeName": emp.employeeName,
+        "outTime": getTimeAndDate.time,
+        'outDevice': localStorage.getItem('uuid'),
+        "outDate": getTimeAndDate.date,
+      },
+      "type": "IN",
+      fileName: emp.employeeCode + getTimeAndDate.time + getTimeAndDate.date,
+      fileType: this.imageObj.format,
+      image: base64String,
+    }
+    this.httpPost.create('timesheet', obj).subscribe(async (res: any) => {
+      if (res.status.message === 'Record Already exist') {
+    // this.presentAlertForError('Error', `Attendance already marked`)
+      }
+      else if (res.status.message === 'SUCCESS') {
+        // this.presentAlert('Success', `Match found for ${emp.employeeName} - ${emp.employeeCode} with ${val}`)
+      }
+    },
+      (err) => {
+        console.error(err);
+        this.presentAlertForError('Error', err.error.status.message + ' In Mark Attendance')
+      })
+  }
+
   speak(text: string): void {
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(text);
@@ -246,11 +218,11 @@ export class MarkInPage implements OnInit {
     // this.alertController.dismiss();
   }
   async presentAlert(header, msg) {
-    const alert = await this.alertController.create({
+    this.alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: header,
       message: msg,
-      buttons: [ 
+      buttons: [
         {
           text: 'Ok',
           handler: () => {
@@ -259,12 +231,9 @@ export class MarkInPage implements OnInit {
         }
       ],
 
-    });
-    console.log('efef');
-
-    await alert.present();
-
-    const { role } = await alert.onDidDismiss();
+    });   
+    await this.alert.present();
+    const { role } = await this.alert.onDidDismiss();
   }
   async presentAlertForError(header, msg) {
     const alert = await this.alertController.create({
@@ -286,126 +255,15 @@ export class MarkInPage implements OnInit {
     const { role } = await alert.onDidDismiss();
   }
 
-  openDatabase() {
-    return new Promise<IDBDatabase>((resolve, reject) => {
-      const request = indexedDB.open(this.dbName, 1);
 
-      request.onupgradeneeded = (event: IDBVersionChangeEvent) => {
-        const db = (event.target as IDBOpenDBRequest).result;
-        const store = db.createObjectStore(this.storeName, { keyPath: 'id', autoIncrement: true });
-        store.createIndex('status', 'status', { unique: false });
-      };
 
-      request.onsuccess = (event: Event) => {
-        resolve((event.target as IDBOpenDBRequest).result);
-      };
-
-      request.onerror = (event: Event) => {
-        reject((event.target as IDBOpenDBRequest).error);
-      };
-    });
+  ionViewWillLeave(): void {
+    this.alert.dismiss();
+    this.captureImg = false;
+    this.clickedimageSrc = null;
+    this.cameraActive = false;
+    this.imageObj = null;
   }
 
-  async storeRecord(record: any) {
-    const db = await this.openDatabase();
-    const transaction = db.transaction([this.storeName], 'readwrite');
-    const store = transaction.objectStore(this.storeName);
 
-    return new Promise<void>((resolve, reject) => {
-      record.status = 'pending';
-      store.add(record);
-
-      transaction.oncomplete = () => {
-        resolve();
-      };
-
-      transaction.onerror = (event: Event) => {
-        reject((event.target as IDBRequest).error);
-      };
-    });
-  }
-  async getPendingRecords(batchSize: number) {
-    const db = await this.openDatabase();
-    const transaction = db.transaction([this.storeName], 'readonly');
-    const store = transaction.objectStore(this.storeName);
-    const index = store.index('status');
-
-    return new Promise<any[]>((resolve, reject) => {
-      const request = index.openCursor(IDBKeyRange.only('pending'));
-      const records: any[] = [];
-      let count = 0;
-
-      request.onsuccess = (event: Event) => {
-        const cursor = (event.target as IDBRequest).result;
-        if (cursor && count < batchSize) {
-          records.push(cursor.value);
-          count++;
-          cursor.continue();
-        } else {
-          resolve(records);
-        }
-      };
-
-      request.onerror = (event: Event) => {
-        reject((event.target as IDBRequest).error);
-      };
-    });
-  }
-  async updateRecordStatus(id: number, status: string) {
-    const db = await this.openDatabase();
-    const transaction = db.transaction([this.storeName], 'readwrite');
-    const store = transaction.objectStore(this.storeName);
-
-    return new Promise<void>((resolve, reject) => {
-      const request = store.get(id);
-
-      request.onsuccess = (event: Event) => {
-        const record = (event.target as IDBRequest).result;
-        record.status = status;
-        store.put(record);
-        resolve();
-      };
-
-      request.onerror = (event: Event) => {
-        reject((event.target as IDBRequest).error);
-      };
-    });
-  }
-
-  async processRecords() {
-    const batchSize = 5;
-
-    while (true) {
-      const pendingRecords = await this.getPendingRecords(batchSize);
-      if (pendingRecords.length === 0) {
-        break;
-      }
-
-      // Make API call with pendingRecords
-      try {
-        await this.sendRecordsToAPI(pendingRecords); // Replace with your API call function
-
-        // Update record status to "sent"
-        for (const record of pendingRecords) {
-          await this.updateRecordStatus(record.id, 'sent');
-        }
-      } catch (error) {
-        // Update record status to "failed"
-        for (const record of pendingRecords) {
-          await this.updateRecordStatus(record.id, 'failed');
-        }
-      }
-    }
-  }
-
-  async sendRecordsToAPI(records: any[]) {
-    // Replace with your API call logic
-    return new Promise<void>((resolve, reject) => {
-      // Simulate API call
-      setTimeout(() => {
-        console.log('Sending records:', records);
-        resolve();
-      }, 100000);
-    });
-  }
 }

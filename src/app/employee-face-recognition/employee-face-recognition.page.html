@@ -1,58 +1,73 @@
-<ion-header class="">
+<ion-header class>
   <ion-toolbar>
-        <ion-menu-button slot="start"></ion-menu-button>
+    <ion-menu-button slot="start"></ion-menu-button>
     <ion-title>Mark Attendance</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
 
-  <ion-select label="Department" class="animate__animated animate__fadeInUp" [(ngModel)]="department" label-placement="floating"
-  fill="outline" >
-  <ion-select-option *ngFor="let c of deptList"
-    [value]="c.deptCode">{{c.deptName}}</ion-select-option>
-</ion-select>
+  <ion-select label="Department" class="animate__animated animate__fadeInUp"
+    [(ngModel)]="department" label-placement="floating"
+    fill="outline">
+    <ion-select-option *ngFor="let c of deptList"
+      [value]="c.deptCode">{{c.deptName}}</ion-select-option>
+  </ion-select>
 
-<br/>
-<ion-item (click)="openModal()" [button]="true" [detail]="false" id="select-employee">
-  <ion-label>{{selectedEmployee || 'Select Employee' }}</ion-label>
-  <!-- <div slot="end" id="selected-employee">{{ selectedEmployeeText }}</div> -->
-</ion-item>
+  <br />
+  <ion-item style="border: 1px solid #b3b3b3;
+    width: 99%;
+    border-radius: 4px;" class="animate__animated animate__fadeInUp" lines="none" (click)="openModal()" [button]="true" [detail]="false"
+    id="select-employee">
+    <ion-label> {{ selectedEmployee?.employeeName &&
+      selectedEmployee?.employeeCode
+      ? (selectedEmployee.employeeName + ' (' + selectedEmployee.employeeCode +
+      ')')
+      : 'Select Employee' }}
+    </ion-label>
+    <!-- <div slot="end" id="selected-employee">{{ selectedEmployeeText }}</div> -->
+  </ion-item>
 
-<div class="ion-margin-top animate__animated animate__fadeInUp"  (click)="capturePhoto()">
-  <img src="../../assets/Auth.svg" style="display: flex; margin: auto;" alt="employee image" *ngIf="!captureImg">
 
-  <img *ngIf="captureImg" style="height: 40vh; display: flex; margin: auto;"
-    [src]="imageSrc" />
-</div>
+  
+  <div class="ion-margin-top animate__animated animate__fadeInUp" >
+    <img src="../../assets/Auth.svg" style="display: flex; margin: auto;"
+      alt="employee image" *ngIf="!captureImg"  (click)="capturePhoto()">
 
-    <!-- <div class="shape" *ngIf="captureImg">
-      <div id="oval"></div>
-      <img *ngIf="captureImg" style="height: 100%;"
-        [src]="clickedimageSrc" />
+    <img *ngIf="captureImg" style="height: 40vh; display: flex; margin: auto;"
+      [src]="clickedimageSrc" />
+  </div>
+
+  <div class="shape" *ngIf="captureImg && !cameraActive">
+     <ion-row>
+      <ion-col size="6">
+      <ion-button color="secondary" expand="block" (click)="markInFun()">Mark In</ion-button>
+      </ion-col>
+      <ion-col size="6">
+        <ion-button color="danger" expand="block" (click)="markOutFun()">Mark Out</ion-button>
+      </ion-col>
+      </ion-row>
     </div>
-    <div style="margin-top: 2%; display: flex;
-      justify-content: center;" *ngIf="captureImg">
-      <ion-button (click)="capturePhoto()">Click to Capture Face</ion-button>
-    </div>  -->
 </ion-content>
 
 <ion-footer class="animate__animated animate__fadeInUp ion-padding">
-    <div *ngIf="!cameraActive">
+  <div *ngIf="!cameraActive">
     <ion-row>
       <ion-col size="6">
-        <ion-button color="danger"  expand="block" (click)="deleteImage()"> Delete
+        <ion-button color="danger" expand="block" (click)="deleteImage()">
+          Delete
         </ion-button>
       </ion-col>
       <ion-col size="6">
-        <ion-button expand="block" color="secondary" *ngIf="captureImg" (click)="capturePhoto()"> Re Capture
+        <ion-button expand="block" color="secondary" *ngIf="captureImg"
+          (click)="capturePhoto()"> Re Capture
         </ion-button>
-         <ion-button expand="block" color="secondary" *ngIf="!captureImg" (click)="capturePhoto()"> Capture
+        <ion-button expand="block" color="secondary" *ngIf="!captureImg"
+          (click)="capturePhoto()"> Capture
         </ion-button>
       </ion-col>
     </ion-row>
 
-
- </div>
+  </div>
   <!-- </ion-toolbar> -->
 </ion-footer>

@@ -20,9 +20,6 @@ export class AttendanceLogsPage implements OnInit {
   async ngOnInit() {
     const records = await this.indexedDBService.getAllRecords();
     const header = 'data:image/';
-    // for (let emp of this.employeeFingerData) {
-    // empImage = header.concat(emp.fileType) + ';base64,' + emp.enrollTemplate
-
     records.forEach(x => {
       x.empImage = header.concat(x.fileType) + ';base64,' + x.image
     })

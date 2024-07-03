@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { GlobalvariablesService } from './globalvariables.service';
 import { AlertController } from '@ionic/angular';
 
 @Injectable({

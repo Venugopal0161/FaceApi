@@ -1,16 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import * as faceapi from 'face-api.js';
-import { HttpGetService } from '../services/http-get.service';
-import { HttpPostService } from '../services/http-post.service';
-
-
-
 import { Router } from '@angular/router';
 import '@capacitor-community/camera-preview';
-import { AlertController, LoadingController, ModalController, ViewWillEnter } from '@ionic/angular';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { AlertController, LoadingController, ModalController } from '@ionic/angular';
+import * as faceapi from 'face-api.js';
 import { FaceRecognitionService } from '../services/face-recognization.service';
 import { GlobalvariablesService } from '../services/globalvariables.service';
+import { HttpGetService } from '../services/http-get.service';
+import { HttpPostService } from '../services/http-post.service';
 import { ToastService } from '../services/toast.service';
 import { EmpModalPage } from './emp-modal/emp-modal.page';
 
@@ -19,7 +16,7 @@ import { EmpModalPage } from './emp-modal/emp-modal.page';
   templateUrl: './employee-face-recognition.page.html',
   styleUrls: ['./employee-face-recognition.page.scss'],
 })
-export class EmployeeFaceRecognitionPage implements OnInit, ViewWillEnter {
+export class EmployeeFaceRecognitionPage implements OnInit {
 
   employeeFingerData = [];
   captureImg = false;
@@ -28,15 +25,12 @@ export class EmployeeFaceRecognitionPage implements OnInit, ViewWillEnter {
   image = null;
   cameraActive = false;
   torchActive = false;
-  dbName = 'EmployeeDB';
-  storeName = 'EmployeeRecords';
   deptList: any[];
   empList: any;
   selectedEmployee: any;
   selectedEmployeeText: any;
   department = 'ALL';
   selectedEmployeefacePrint: any;
-  imageSrc: string;
 
   constructor(
     private httpGet: HttpGetService,
@@ -50,13 +44,8 @@ export class EmployeeFaceRecognitionPage implements OnInit, ViewWillEnter {
     public modalController: ModalController,
   ) {
   }
-  ionViewWillEnter() {
-    // this.capturePhoto();
-  }
-
   async ngOnInit() {
     this.getDeptList();
-    // this.capturePhoto();
   }
 
   getDeptList() {
@@ -73,11 +62,8 @@ export class EmployeeFaceRecognitionPage implements OnInit, ViewWillEnter {
     },
       err => {
         console.error(err);
-
       })
   }
-
-
   async capturePhoto() {
     this.captureImg = false;
     this.clickedimageSrc = null;
@@ -91,22 +77,18 @@ export class EmployeeFaceRecognitionPage implements OnInit, ViewWillEnter {
       });
       this.cameraActive = true;
       this.imageObj = image;
-    this.global.presentLoading();
-    const blob = await this.uriToBlob(image.webPath);
-    await this.blobToBase64(blob);
-      return image;
+      this.global.presentLoading();
+      const blob = await this.uriToBlob(image.webPath);
+      await this.blobToBase64(blob);
     } catch (error) {
       if (error.message === 'User cancelled photos app') {
         this.router.navigateByUrl('/recognition');
         this.cameraActive = false;
-
         // Optionally show a message to the user
       } else {
         // Handle other errors
         console.error('Error capturing photo:', error);
         this.cameraActive = false;
-        // Optionally show a different message to the user
-        // this.presentAlert('Photo Capture Error', 'An error occurred while capturing the photo.');
       }
     }
     return null;
@@ -150,31 +132,14 @@ export class EmployeeFaceRecognitionPage implements OnInit, ViewWillEnter {
     }
   }
   recgonise = async (base64data, base64String) => {
-    // console.log(base64data);
-    const getTimeAndDate = this.getDateAndTime();
     const refFace = await faceapi.fetchImage(base64data);
     let refFaceAiData = await faceapi.detectAllFaces(refFace).withFaceLandmarks().withFaceDescriptors()
     console.log('your face captured', refFaceAiData);
     if (refFaceAiData.length >= 1) {
       let empImage: string;
       let listOfDistances = [];
-      const facedata = this.selectedEmployeefacePrint;
-
-      // const header = 'data:image/';
-      // for (let emp of this.employeeFingerData) {
-      // empImage = header.concat(emp.fileType) + ';base64,' + emp.enrollTemplate
-
-
-      // const facesToCheck = await faceapi.fetchImage(empImage);
-      // let facesToCheckAiData = await faceapi.detectAllFaces(facesToCheck).withFaceLandmarks().withFaceDescriptors()
-      // console.warn('facesToCheckAiData', facesToCheckAiData);
-
-      // facesToCheckAiData = faceapi.resizeResults(facesToCheckAiData, facesToCheck)
-      // console.log('facesToCheckAiData >>>>>>', facesToCheckAiData);
-
-      console.log('facedata', facedata);
-
-        let faceMatcher = new faceapi.FaceMatcher(refFaceAiData);
+      const facedata = [this.selectedEmployeefacePrint];
+      let faceMatcher = new faceapi.FaceMatcher(refFaceAiData);
       facedata.forEach(element => {
         const matchResults = element.facesToCheckAiData.map(face => {
           const { detection, descriptor } = face;
@@ -189,21 +154,14 @@ export class EmployeeFaceRecognitionPage implements OnInit, ViewWillEnter {
           };
         });
       });
-
-      // }
       // Step 2: Extract the scores
       const scores = listOfDistances.map(result => result.match.distance);
-      // console.log('scores lessthan 6', scores);
       // Step 3: Find the minimum score
       const minScore = Math.min(...scores);
       console.log('minScore', scores, minScore);
 
       let val: number
       val = Number(minScore.toFixed(2));
-
-      // Step 4: Count occurrences of the minimum score
-      // const mc = scores.filter(score => score < 0.51).length;
-      // console.log('mc count', mc);
 
       const minScoreCount = scores.filter(score => score === minScore && score <= 0.49).length;
       console.log('minScoreCount', minScoreCount);
@@ -214,38 +172,11 @@ export class EmployeeFaceRecognitionPage implements OnInit, ViewWillEnter {
         const { detection } = bestMatch.face;
         const emp = bestMatch.emp;
         const label = bestMatch.match.toString();
-        this.speak(`Heyy ${emp.employeeName}`);
         this.captureImg = true;
-        this.presentAlert('Success', `Match found for ${emp.employeeName} - ${emp.employeeCode} with ${val}`)
-        await this.storeRecord({
-          "timesheetdto": {
-            "dateCode": getTimeAndDate.date,
-            "employeeCode": emp.employeeCode,
-            "employeeName": emp.employeeName,
-            "outTime": getTimeAndDate.time,
-            'outDevice': localStorage.getItem('uuid'),
-            "outDate": getTimeAndDate.date,
-          },
-          "type": "OUT",
-          fileName: emp.employeeCode + getTimeAndDate.time + getTimeAndDate.date,
-          fileType: this.imageObj.format,
-          image: base64String,
-          // locationLog: {
-          //   "latitude": this.latCode,
-          //   "longitude": this.longCode,
-          //   "deviceId": localStorage.getItem('uuid')
-          // }
-        });
-
-
-        this.processRecords();
-
-        // Ensure the label is not "unknown"
-        if (!label.includes("unknown")) {
-          let options = { label: "employee" };
+        if (emp.employeeCode == this.selectedEmployee.employeeCode) {
+          this.presentAlert('Success', `Match found for ${emp.employeeName} - ${emp.employeeCode} with ${val}`)
         }
       } else if (minScoreCount === 0) {
-        // this.toastService.presentToast('Error', 'No match found', 'top', 'danger', 7000);
         this.speak('Sorry, I cannot recognize you');
         this.presentAlertForError('Error', `No match found and got value ${val}`);
       }
@@ -253,8 +184,6 @@ export class EmployeeFaceRecognitionPage implements OnInit, ViewWillEnter {
     else {
       this.presentAlertForError('Error', `Face not recognised properly`)
       this.loadingController.dismiss();
-      // this.deleteImage();
-      // this.toastService.presentToast('Error', 'Face not recognised properly', 'top', 'danger', 7000)
     }
 
   }
@@ -285,11 +214,15 @@ export class EmployeeFaceRecognitionPage implements OnInit, ViewWillEnter {
       cssClass: 'my-custom-class',
       header: header,
       message: msg,
-      buttons: [ 
+      buttons: [
         {
           text: 'Ok',
           handler: () => {
-            this.deleteImage();
+            this.cameraActive = false;
+            this.captureImg = true;
+            // this.clickedimageSrc = null;
+            // this.imageObj = null;
+
           }
         }
       ],
@@ -321,152 +254,134 @@ export class EmployeeFaceRecognitionPage implements OnInit, ViewWillEnter {
     const { role } = await alert.onDidDismiss();
   }
 
-  openDatabase() {
-    return new Promise<IDBDatabase>((resolve, reject) => {
-      const request = indexedDB.open(this.dbName, 1);
 
-      request.onupgradeneeded = (event: IDBVersionChangeEvent) => {
-        const db = (event.target as IDBOpenDBRequest).result;
-        const store = db.createObjectStore(this.storeName, { keyPath: 'id', autoIncrement: true });
-        store.createIndex('status', 'status', { unique: false });
-      };
 
-      request.onsuccess = (event: Event) => {
-        resolve((event.target as IDBOpenDBRequest).result);
-      };
-
-      request.onerror = (event: Event) => {
-        reject((event.target as IDBOpenDBRequest).error);
-      };
-    });
-  }
-
-  async storeRecord(record: any) {
-    const db = await this.openDatabase();
-    const transaction = db.transaction([this.storeName], 'readwrite');
-    const store = transaction.objectStore(this.storeName);
-
-    return new Promise<void>((resolve, reject) => {
-      record.status = 'pending';
-      store.add(record);
-
-      transaction.oncomplete = () => {
-        resolve();
-      };
-
-      transaction.onerror = (event: Event) => {
-        reject((event.target as IDBRequest).error);
-      };
-    });
-  }
-  async getPendingRecords(batchSize: number) {
-    const db = await this.openDatabase();
-    const transaction = db.transaction([this.storeName], 'readonly');
-    const store = transaction.objectStore(this.storeName);
-    const index = store.index('status');
-
-    return new Promise<any[]>((resolve, reject) => {
-      const request = index.openCursor(IDBKeyRange.only('pending'));
-      const records: any[] = [];
-      let count = 0;
-
-      request.onsuccess = (event: Event) => {
-        const cursor = (event.target as IDBRequest).result;
-        if (cursor && count < batchSize) {
-          records.push(cursor.value);
-          count++;
-          cursor.continue();
-        } else {
-          resolve(records);
+  async openModal() {
+    if (!this.captureImg) {
+      const modal = await this.modalController.create({
+        component: EmpModalPage,
+        backdropDismiss: false,
+        cssClass: 'auto-height',
+        componentProps: {
+          // empList: this.empList
+          dept: this.department
         }
-      };
+      });
+      modal.onDidDismiss().then((d: any) => {
+        this.selectedEmployee = d.data.empRecord;
+        console.log('selectedEmployee', this.selectedEmployee);
+        console.log(this.faceServ.listOfFaceData);
 
-      request.onerror = (event: Event) => {
-        reject((event.target as IDBRequest).error);
-      };
-    });
-  }
-  async updateRecordStatus(id: number, status: string) {
-    const db = await this.openDatabase();
-    const transaction = db.transaction([this.storeName], 'readwrite');
-    const store = transaction.objectStore(this.storeName);
-
-    return new Promise<void>((resolve, reject) => {
-      const request = store.get(id);
-
-      request.onsuccess = (event: Event) => {
-        const record = (event.target as IDBRequest).result;
-        record.status = status;
-        store.put(record);
-        resolve();
-      };
-
-      request.onerror = (event: Event) => {
-        reject((event.target as IDBRequest).error);
-      };
-    });
-  }
-
-  async processRecords() {
-    const batchSize = 5;
-
-    while (true) {
-      const pendingRecords = await this.getPendingRecords(batchSize);
-      if (pendingRecords.length === 0) {
-        break;
-      }
-
-      // Make API call with pendingRecords
-      try {
-        await this.sendRecordsToAPI(pendingRecords); // Replace with your API call function
-
-        // Update record status to "sent"
-        for (const record of pendingRecords) {
-          await this.updateRecordStatus(record.id, 'sent');
-        }
-      } catch (error) {
-        // Update record status to "failed"
-        for (const record of pendingRecords) {
-          await this.updateRecordStatus(record.id, 'failed');
-        }
-      }
+        this.selectedEmployeefacePrint = this.faceServ.listOfFaceData.find(x => x.emp.employeeCode == this.selectedEmployee.employeeCode);
+        console.log('selectedEmployeefacePrint', this.selectedEmployeefacePrint);
+      });
+      return await modal.present();
     }
   }
 
-  async sendRecordsToAPI(records: any[]) {
-    // Replace with your API call logic
-    return new Promise<void>((resolve, reject) => {
-      // Simulate API call
-      setTimeout(() => {
-        console.log('Sending records:', records);
-        resolve();
-      }, 100000);
-    });
-  }
+  async markInFun() {
+    const getTimeAndDate = this.getDateAndTime();
+    const obj = {
+      "timesheetdto": {
+        "dateCode": getTimeAndDate.date,
+        "employeeCode": this.selectedEmployee.employeeCode,
+        "employeeName": this.selectedEmployee.employeeName,
+        "outTime": getTimeAndDate.time,
+        'outDevice': localStorage.getItem('uuid'),
+        "outDate": getTimeAndDate.date,
+      },
+      "type": "IN",
+      fileName: this.selectedEmployee.employeeCode + getTimeAndDate.time + getTimeAndDate.date,
+      fileType: this.imageObj.format,
+      image: this.clickedimageSrc.replace(/^data:image\/\w+;base64,/, '')
+    }
+    this.global.presentLoading();
 
-  async openModal() {
-     const modal = await this.modalController.create({
-      component: EmpModalPage,
-      backdropDismiss: false,
-      cssClass: 'auto-height',
-      componentProps: {
-        // empList: this.empList
-        dept : this.department
+    this.httpPost.create('timesheet', obj).subscribe(async (res: any) => {
+      this.global.loadingController.dismiss();
+      if (res.status.message === 'Record Already exist') {
+        this.presentAlertForError('Error', `Attendance already marked`)
       }
-    });
-    modal.onDidDismiss().then((d: any) => {
-      this.selectedEmployee = d.data.empRecord;
-     console.log('selectedEmployee', this.selectedEmployee);
-      this.selectedEmployeefacePrint = this.faceServ.listOfFaceData.find(emp => emp.emp.employeeCode === this.selectedEmployee.employeeCode);
-     
-      console.log('selectedEmployeefacePrint', this.selectedEmployeefacePrint);
+      else if (res.status.message === 'SUCCESS') {
+        const alert = await this.alertController.create({
+          cssClass: 'my-custom-class',
+          header: 'Success',
+          message: 'Attendance marked',
+          buttons: [
+            {
+              text: 'Ok',
+              handler: () => {
+                this.cameraActive = false;
+                this.captureImg = false;
+              }
+            }
+          ],
 
-
-
-    });
-    return await modal.present();
+        });
+        await alert.present();
+        const { role } = await alert.onDidDismiss();
+      }
+      else {
+        this.presentAlertForError('Error', res.status.message)
+      }
+    },
+      (err) => {
+        console.error(err);
+        this.global.loadingController.dismiss();
+        this.presentAlertForError('Error', err.error.status.message)
+      })
   }
 
 
+  async markOutFun() {
+    const getTimeAndDate = this.getDateAndTime();
+    const obj = {
+      "timesheetdto": {
+        "dateCode": getTimeAndDate.date,
+        "employeeCode": this.selectedEmployee.employeeCode,
+        "employeeName": this.selectedEmployee.employeeName,
+        "outTime": getTimeAndDate.time,
+        'outDevice': localStorage.getItem('uuid'),
+        "outDate": getTimeAndDate.date,
+      },
+      "type": "OUT",
+      fileName: this.selectedEmployee.employeeCode + getTimeAndDate.time + getTimeAndDate.date,
+      fileType: this.imageObj.format,
+      image: this.clickedimageSrc.replace(/^data:image\/\w+;base64,/, '')
+    }
+    this.global.presentLoading();
+    this.httpPost.create('timesheet', obj).subscribe(async (res: any) => {
+      this.global.loadingController.dismiss();
+      if (res.status.message === 'Record Already exist') {
+        this.presentAlertForError('Error', `Attendance already marked`)
+      }
+      else if (res.status.message === 'SUCCESS') {
+        const alert = await this.alertController.create({
+          cssClass: 'my-custom-class',
+          header: 'Success',
+          message: 'Attendance marked',
+          buttons: [
+            {
+              text: 'Ok',
+              handler: () => {
+                this.cameraActive = false;
+                this.captureImg = false;
+              }
+            }
+          ],
 
+        });
+        await alert.present();
+        const { role } = await alert.onDidDismiss();
+      }
+      else {
+        this.presentAlertForError('Error', res.status.message)
+      }
+    },
+      (err) => {
+        console.error(err);
+        this.global.loadingController.dismiss();
+        this.presentAlertForError('Error', err.error.status.message)
+      })
+  }
 }

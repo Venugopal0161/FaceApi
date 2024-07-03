@@ -1,0 +1,66 @@
+ion-item {
+    height: 56px;
+    // border: 1px solid #23539B;
+    border-radius: 8px;
+}
+
+ion-content {
+    --background: #cddfeb;
+}
+
+ion-content {
+    --background: #cddfeb !important
+}
+
+ion-input {
+    background-color: #ffffff;
+    --placeholder-color: #A0AEC0 !important;
+    color: #111827 !important;
+    font-family: "Urbanist-SemiBold";
+    font-weight: 400;
+}
+
+
+ion-item::part(native) {
+    background-color: #ffffff;
+}
+
+ion-item:focus,
+ion-item:hover {
+    // outline: none;
+    border-radius: 8px;
+    border-style: solid;
+    border-color: var(--ion-color-secondary, );
+    border-width: 0.5px;
+    background-color: #fff;
+    // box-shadow: 0 0 0 5px rgb(129 140 248 / 30%);
+}
+
+
+
+
+ion-button {
+    text-transform: none;
+}
+
+
+
+.logo-container {
+    text-align: center;
+
+    h1 {
+        font-size: 32px;
+        font-weight: 800;
+    }
+
+    p {
+        margin-bottom: 42px;
+    }
+}
+
+.ion-backBtn {
+    background: transparent;
+    display: flex;
+    font-size: larger;
+
+}

@@ -1,30 +1,71 @@
 <ion-app>
   <ion-split-pane contentId="main-content" [swipeGesture]="false">
-    <ion-menu menuId="main-menu" contentId="main" >
+    <ion-menu menuId="main-menu" contentId="main">
       <ion-content>
-        <ion-list id="inbox-list">
-          <ion-list-header>Face Biometric</ion-list-header>
-          <ion-note>______________</ion-note>
-          <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages; let i = index">
-            <ion-item routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" routerLinkActive="selected">
-              <ion-icon aria-hidden="true" slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
+        <ion-list id="inbox-list" class="animate__animated animate__fadeInUp">
+          <ion-list-header>
+            <ion-img src="assets/Logo.svg"
+              style="margin: auto; display: block;"></ion-img>
+          </ion-list-header>
+          <ion-list-header
+            style="margin-top: -22px;    font-size: larger;"><span
+              style="margin: auto;">Face Attendance </span></ion-list-header>
+        </ion-list>
+        <ion-list id="inbox-list" class="animate__animated animate__fadeInUp">
+          <ion-menu-toggle auto-hide="false"
+            *ngFor="let p of appPages; let i = index">
+            <ion-item routerDirection="root" [routerLink]="[p.url]" lines="none"
+              detail="false" routerLinkActive="selected">
+              <ion-icon aria-hidden="true" slot="start"
+                [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
               <ion-label>{{ p.title }}</ion-label>
             </ion-item>
           </ion-menu-toggle>
         </ion-list>
 
-        <ion-list id="labels-list">
+        <ion-list id="labels-list" class="animate__animated animate__fadeInUp" *ngIf="hasAdminLogin">
           <!-- <ion-list-header>Labels</ion-list-header> -->
+          <ion-menu-toggle auto-hide="false"
+            *ngFor="let p of labels; let i = index">
 
-          <!-- <ion-item *ngFor="let label of labels" lines="none">
-            <ion-icon aria-hidden="true" slot="start" ios="bookmark-outline" md="bookmark-sharp"></ion-icon>
-            <ion-label>{{ label }}</ion-label>
-          </ion-item> -->
-           <ion-menu-toggle auto-hide="false">
-            <ion-item routerDirection="root" routerLink="/login" lines="none" detail="false" routerLinkActive="selected" (click)="logout()">
+            <ion-item routerDirection="root" [routerLink]="[p.url]" lines="none"
+              detail="false" routerLinkActive="selected">
+              <ion-icon aria-hidden="true" slot="start"
+                [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
+              <ion-label>{{ p.title }}</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+
+        </ion-list>
+
+        <ion-list id="labels-list" style="position: absolute;bottom: 5px;width: 90%;">
+        <ion-menu-toggle auto-hide="false" *ngIf="hasAdminLogin">
+            <ion-item routerDirection="root" routerLink="/adminlogin" lines="none"
+              detail="false" routerLinkActive="selected"  (click)="logoutAsAdmin()">
               <!-- <ion-icon aria-hidden="true" slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon> -->
-              <ion-icon name="log-out" aria-hidden="true" slot="start"></ion-icon>
-              <ion-label  >Logout</ion-label>
+              <ion-icon name="log-out" aria-hidden="true"
+                slot="start"></ion-icon>
+              <ion-label>Logout Admin</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+
+          <ion-menu-toggle auto-hide="false"  *ngIf="!hasAdminLogin"> 
+            <ion-item routerDirection="root" routerLink="/adminlogin" lines="none"  (click)="logInAsAdmin()"
+              detail="false" routerLinkActive="selected">
+              <!-- <ion-icon aria-hidden="true" slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon> -->
+              <ion-icon name="log-in" aria-hidden="true"
+                slot="start"></ion-icon>
+              <ion-label>Login As Admin</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+
+          <ion-menu-toggle auto-hide="false">
+            <ion-item routerDirection="root" routerLink="/login" lines="none"
+              detail="false" routerLinkActive="selected" (click)="logout()">
+              <!-- <ion-icon aria-hidden="true" slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon> -->
+              <ion-icon name="log-out" aria-hidden="true"
+                slot="start"></ion-icon>
+              <ion-label>Logout</ion-label>
             </ion-item>
           </ion-menu-toggle>
         </ion-list>

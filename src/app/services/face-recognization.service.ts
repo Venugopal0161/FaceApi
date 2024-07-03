@@ -27,7 +27,7 @@ export class FaceRecognitionService {
             faceapi.nets.ssdMobilenetv1.loadFromUri('/assets'),
             faceapi.nets.faceLandmark68Net.loadFromUri('/assets'),
             faceapi.nets.faceRecognitionNet.loadFromUri('/assets'),
-            faceapi.nets.ageGenderNet.loadFromUri('/assets'),
+            // faceapi.nets.ageGenderNet.loadFromUri('/assets'),
         ]);
         console.log('Models loaded successfully');
         this.getFingerData();

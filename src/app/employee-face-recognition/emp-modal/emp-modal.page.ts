@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ModalController } from '@ionic/angular';
+import { GlobalvariablesService } from 'src/app/services/globalvariables.service';
 import { HttpGetService } from 'src/app/services/http-get.service';
 
 @Component({
@@ -20,6 +21,7 @@ export class EmpModalPage implements OnInit {
   constructor(
     private modalCtrl: ModalController,
     private router: Router,
+    private global: GlobalvariablesService,
     private httpGet: HttpGetService,
   ) { }
 
@@ -60,15 +62,18 @@ export class EmpModalPage implements OnInit {
   }
 
   getEmployeesData() {
+    this.global.presentLoading();
     this.httpGet
-      .getMasterList('empFingerData?deptCode=' + this.dept)
+      .getMasterList('empFingerData?deptCode=' + this.dept + '&isPresent=true')
       .subscribe((res: any) => {
+        this.global.loadingController.dismiss();
         this.empList = res.response;
         this.temp = [...this.empList];
         console.log('empList', this.empList);
         
       },
         err => {
+          this.global.loadingController.dismiss();
           console.error(err);
         })
   }
