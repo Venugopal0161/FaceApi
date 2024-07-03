@@ -47,7 +47,7 @@ export class EmployeeFaceRegistrationPage implements OnInit {
 
   getEmployeesData(ev) {
     this.httpGet
-      .getMasterList('empFingerData?deptCode=' + ev.target.value)
+      .getMasterList('empFingerData?deptCode=' + ev.target.value + '&isPresent=false')
       .subscribe((res: any) => {
         this.empList = res.response;
       },

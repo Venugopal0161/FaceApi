@@ -79,6 +79,7 @@ export class EmployeeFaceRecognitionPage implements OnInit, ViewWillEnter {
 
 
   async capturePhoto() {
+    if (this.selectedEmployee) {
     this.captureImg = false;
     this.clickedimageSrc = null;
     this.imageObj = null;
@@ -109,7 +110,8 @@ export class EmployeeFaceRecognitionPage implements OnInit, ViewWillEnter {
         // this.presentAlert('Photo Capture Error', 'An error occurred while capturing the photo.');
       }
     }
-    return null;
+  }
+  return null;
   }
   async uriToBlob(uri: string): Promise<Blob> {
     const response = await fetch(uri);

@@ -61,7 +61,7 @@ export class EmpModalPage implements OnInit {
 
   getEmployeesData() {
     this.httpGet
-      .getMasterList('empFingerData?deptCode=' + this.dept)
+      .getMasterList('empFingerData?deptCode=' + this.dept + '&isPresent=true')
       .subscribe((res: any) => {
         this.empList = res.response;
         this.temp = [...this.empList];
