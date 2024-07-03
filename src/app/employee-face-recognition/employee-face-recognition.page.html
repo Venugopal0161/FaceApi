@@ -7,12 +7,24 @@
 
 <ion-content class="ion-padding">
 
-  <ion-select label="Department" class="animate__animated animate__fadeInUp" label-placement="floating"
-  fill="outline" (ionChange)="getEmployeesData($event)">
+  <ion-select label="Department" class="animate__animated animate__fadeInUp" [(ngModel)]="department" label-placement="floating"
+  fill="outline" >
   <ion-select-option *ngFor="let c of deptList"
     [value]="c.deptCode">{{c.deptName}}</ion-select-option>
 </ion-select>
 
+<br/>
+<ion-item (click)="openModal()" [button]="true" [detail]="false" id="select-employee">
+  <ion-label>{{selectedEmployee || 'Select Employee' }}</ion-label>
+  <!-- <div slot="end" id="selected-employee">{{ selectedEmployeeText }}</div> -->
+</ion-item>
+
+<div class="ion-margin-top animate__animated animate__fadeInUp"  (click)="capturePhoto()">
+  <img src="../../assets/Auth.svg" style="display: flex; margin: auto;" alt="employee image" *ngIf="!captureImg">
+
+  <img *ngIf="captureImg" style="height: 40vh; display: flex; margin: auto;"
+    [src]="imageSrc" />
+</div>
 
     <!-- <div class="shape" *ngIf="captureImg">
       <div id="oval"></div>

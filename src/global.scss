@@ -78,3 +78,21 @@ ion-button{
         }
     }
 }
+
+ion-modal.auto-height {
+    --height: auto;
+  
+    // .modal-wrapper {
+    // width: 90%;
+    // top: -45% !important;
+    // border-radius: 26px;
+    .ion-page {
+      position: relative;
+      contain: content;
+      max-height: 60%;
+  
+      .modal-content {
+        overflow: auto;
+      }
+    }
+  }

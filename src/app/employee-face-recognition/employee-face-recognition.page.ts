@@ -8,10 +8,12 @@ import { HttpPostService } from '../services/http-post.service';
 
 import { Router } from '@angular/router';
 import '@capacitor-community/camera-preview';
-import { AlertController, LoadingController, ViewWillEnter } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController, ViewWillEnter } from '@ionic/angular';
 import { FaceRecognitionService } from '../services/face-recognization.service';
 import { GlobalvariablesService } from '../services/globalvariables.service';
 import { ToastService } from '../services/toast.service';
+import { EmpModalPage } from './emp-modal/emp-modal.page';
+
 @Component({
   selector: 'app-employee-face-recognition',
   templateUrl: './employee-face-recognition.page.html',
@@ -30,6 +32,12 @@ export class EmployeeFaceRecognitionPage implements OnInit, ViewWillEnter {
   storeName = 'EmployeeRecords';
   deptList: any[];
   empList: any;
+  selectedEmployee: any;
+  selectedEmployeeText: any;
+  department = 'ALL';
+  selectedEmployeefacePrint: any;
+  imageSrc: string;
+
   constructor(
     private httpGet: HttpGetService,
     private httpPost: HttpPostService,
@@ -39,6 +47,7 @@ export class EmployeeFaceRecognitionPage implements OnInit, ViewWillEnter {
     private global: GlobalvariablesService,
     public loadingController: LoadingController,
     public toastService: ToastService,
+    public modalController: ModalController,
   ) {
   }
   ionViewWillEnter() {
@@ -59,7 +68,7 @@ export class EmployeeFaceRecognitionPage implements OnInit, ViewWillEnter {
           deptCode: 'ALL',
           deptName: 'ALL'
         })
-        this.deptList = dpt;
+        this.deptList = res.response;
       }
     },
       err => {
@@ -68,16 +77,6 @@ export class EmployeeFaceRecognitionPage implements OnInit, ViewWillEnter {
       })
   }
 
-  getEmployeesData(ev) {
-    this.httpGet
-      .getMasterList('empFingerData?deptCode=' + ev.target.value)
-      .subscribe((res: any) => {
-        this.empList = res.response;
-      },
-        err => {
-          console.error(err);
-        })
-  }
 
   async capturePhoto() {
     this.captureImg = false;
@@ -159,7 +158,7 @@ export class EmployeeFaceRecognitionPage implements OnInit, ViewWillEnter {
     if (refFaceAiData.length >= 1) {
       let empImage: string;
       let listOfDistances = [];
-      const facedata = this.faceServ.listOfFaceData;
+      const facedata = this.selectedEmployeefacePrint;
 
       // const header = 'data:image/';
       // for (let emp of this.employeeFingerData) {
@@ -444,6 +443,30 @@ export class EmployeeFaceRecognitionPage implements OnInit, ViewWillEnter {
       }, 100000);
     });
   }
+
+  async openModal() {
+     const modal = await this.modalController.create({
+      component: EmpModalPage,
+      backdropDismiss: false,
+      cssClass: 'auto-height',
+      componentProps: {
+        // empList: this.empList
+        dept : this.department
+      }
+    });
+    modal.onDidDismiss().then((d: any) => {
+      this.selectedEmployee = d.data.empRecord;
+     console.log('selectedEmployee', this.selectedEmployee);
+      this.selectedEmployeefacePrint = this.faceServ.listOfFaceData.find(emp => emp.emp.employeeCode === this.selectedEmployee.employeeCode);
+     
+      console.log('selectedEmployeefacePrint', this.selectedEmployeefacePrint);
+
+
+
+    });
+    return await modal.present();
+  }
+
 
 
 }

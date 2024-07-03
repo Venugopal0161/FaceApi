@@ -7,6 +7,10 @@ const routes: Routes = [
   {
     path: '',
     component: EmployeeFaceRecognitionPage
+  },
+  {
+    path: 'emp-modal',
+    loadChildren: () => import('./emp-modal/emp-modal.module').then( m => m.EmpModalPageModule)
   }
 ];
 
