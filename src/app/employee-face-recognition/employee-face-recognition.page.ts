@@ -92,6 +92,8 @@ export class EmployeeFaceRecognitionPage implements OnInit {
         this.cameraActive = false;
       }
     }
+    } else {
+      this.toastService.presentToast('Error', 'Please select employee', 'top', 'danger', 2000);
   }
   return null;
   }
@@ -136,7 +138,6 @@ export class EmployeeFaceRecognitionPage implements OnInit {
   recgonise = async (base64data, base64String) => {
     const refFace = await faceapi.fetchImage(base64data);
     let refFaceAiData = await faceapi.detectAllFaces(refFace).withFaceLandmarks().withFaceDescriptors()
-    console.log('your face captured', refFaceAiData);
     if (refFaceAiData.length >= 1) {
       let empImage: string;
       let listOfDistances = [];
@@ -160,13 +161,10 @@ export class EmployeeFaceRecognitionPage implements OnInit {
       const scores = listOfDistances.map(result => result.match.distance);
       // Step 3: Find the minimum score
       const minScore = Math.min(...scores);
-      console.log('minScore', scores, minScore);
-
       let val: number
       val = Number(minScore.toFixed(2));
 
       const minScoreCount = scores.filter(score => score === minScore && score <= 0.49).length;
-      console.log('minScoreCount', minScoreCount);
       this.loadingController.dismiss();
       // Step 5: Proceed if there is only one least value
       if (minScoreCount === 1) {
@@ -215,6 +213,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: header,
+      backdropDismiss: false,
       message: msg,
       buttons: [
         {
@@ -230,8 +229,6 @@ export class EmployeeFaceRecognitionPage implements OnInit {
       ],
 
     });
-    console.log('efef');
-
     await alert.present();
 
     const { role } = await alert.onDidDismiss();
@@ -240,6 +237,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class-danger',
       header: header,
+      backdropDismiss: false,
       message: msg,
       buttons: [
         {
@@ -271,11 +269,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
       });
       modal.onDidDismiss().then((d: any) => {
         this.selectedEmployee = d.data.empRecord;
-        console.log('selectedEmployee', this.selectedEmployee);
-        console.log(this.faceServ.listOfFaceData);
-
         this.selectedEmployeefacePrint = this.faceServ.listOfFaceData.find(x => x.emp.employeeCode == this.selectedEmployee.employeeCode);
-        console.log('selectedEmployeefacePrint', this.selectedEmployeefacePrint);
       });
       return await modal.present();
     }
@@ -288,9 +282,9 @@ export class EmployeeFaceRecognitionPage implements OnInit {
         "dateCode": getTimeAndDate.date,
         "employeeCode": this.selectedEmployee.employeeCode,
         "employeeName": this.selectedEmployee.employeeName,
-        "outTime": getTimeAndDate.time,
-        'outDevice': localStorage.getItem('uuid'),
-        "outDate": getTimeAndDate.date,
+        "inTime": getTimeAndDate.time,
+        'inDevice': localStorage.getItem('uuid'),
+        "inDate": getTimeAndDate.date,
       },
       "type": "IN",
       fileName: this.selectedEmployee.employeeCode + getTimeAndDate.time + getTimeAndDate.date,
@@ -307,6 +301,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
       else if (res.status.message === 'SUCCESS') {
         const alert = await this.alertController.create({
           cssClass: 'my-custom-class',
+          backdropDismiss: false,
           header: 'Success',
           message: 'Attendance marked',
           buttons: [
@@ -318,7 +313,6 @@ export class EmployeeFaceRecognitionPage implements OnInit {
               }
             }
           ],
-
         });
         await alert.present();
         const { role } = await alert.onDidDismiss();
@@ -361,6 +355,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
         const alert = await this.alertController.create({
           cssClass: 'my-custom-class',
           header: 'Success',
+          backdropDismiss: false,
           message: 'Attendance marked',
           buttons: [
             {

@@ -113,7 +113,6 @@ export class MarkOutPage implements OnInit {
   recgonise = async (base64data, base64String) => {
     const refFace = await faceapi.fetchImage(base64data);
     let refFaceAiData = await faceapi.detectAllFaces(refFace).withFaceLandmarks().withFaceDescriptors()
-    console.log('your face captured', refFaceAiData);
     if (refFaceAiData.length >= 1) {
       let empImage: string;
       let listOfDistances = [];
@@ -140,7 +139,6 @@ export class MarkOutPage implements OnInit {
       let val: number
       val = Number(minScore.toFixed(2));
       const minScoreCount = scores.filter(score => score === minScore && score <= 0.49).length;
-      console.log('minScoreCount', minScoreCount);
       this.loadingController.dismiss();
       // Step 5: Proceed if there is only one least value
       if (minScoreCount === 1) {
@@ -244,6 +242,7 @@ export class MarkOutPage implements OnInit {
       cssClass: 'my-custom-class',
       header: header,
       message: msg,
+      backdropDismiss: false,
       buttons: [ 
         {
           text: 'Ok',
@@ -254,8 +253,6 @@ export class MarkOutPage implements OnInit {
       ],
 
     });
-    console.log('efef');
-
     await alert.present();
 
     const { role } = await alert.onDidDismiss();
@@ -265,6 +262,7 @@ export class MarkOutPage implements OnInit {
       cssClass: 'my-custom-class-danger',
       header: header,
       message: msg,
+      backdropDismiss: false,
       buttons: [
         {
           text: 'Ok',

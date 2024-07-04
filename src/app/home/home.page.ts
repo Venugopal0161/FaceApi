@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpGetService } from '../services/http-get.service';
-import { ViewImagePage } from './view-image/view-image.page';
 import { ModalController } from '@ionic/angular';
-import { HttpPutService } from '../services/http-put.service';
 import { GlobalvariablesService } from '../services/globalvariables.service';
+import { HttpGetService } from '../services/http-get.service';
+import { HttpPutService } from '../services/http-put.service';
+import { ViewImagePage } from './view-image/view-image.page';
 
 @Component({
   selector: 'app-home',
@@ -43,18 +43,12 @@ export class HomePage implements OnInit {
   getFingerData() {
     this.global.presentLoading();
     this.httpGet.getMasterList('fingerdatas').subscribe((res: any) => {
-
       res.response.forEach(element => {
         element.image = 'data:image/jpeg;base64,' + element.enrollTemplate;
       });
       this.global.loadingController.dismiss();
-
       this.employeeFingerData = res.response;
       this.temp = [...this.employeeFingerData];
-      console.log('>>>>>',this.employeeFingerData);
-
-
-      
     },
       err => {
         this.global.loadingController.dismiss();
@@ -74,8 +68,7 @@ async viewImage(image){
 }
 deleteEmployee(id) {
   this.global.presentLoading();
-  this.httpPut.update('fd?fdId='+id,'').subscribe((res: any) => {
-    console.log(res);
+  this.httpPut.update('fd?fdId=' + id, '').subscribe((res: any) => {
     this.global.loadingController.dismiss();
     // this.getFingerData();
     if(res.status.message === 'SUCCESS'){

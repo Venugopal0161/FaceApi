@@ -48,10 +48,8 @@ export class FaceRecognitionService {
                     emp: emp
                 })
             }
-            console.log('listOfFaceData', this.listOfFaceData);
             await this.dismissLoading();
             this.router.navigate(['/recognition']);
-
         },
             err => {
                 console.error(err);
@@ -61,12 +59,9 @@ export class FaceRecognitionService {
     async recognizeFace(base64data: string, employeeFingerData: any[]) {
         const refFace = await faceapi.fetchImage(base64data);
         let refFaceAiData = await faceapi.detectAllFaces(refFace).withFaceLandmarks().withFaceDescriptors();
-        console.log('Your face captured', refFaceAiData);
-
         if (refFaceAiData.length >= 1) {
             let listOfDistances = [];
             const header = 'data:image/';
-
             for (let emp of employeeFingerData) {
                 let empImage = header.concat(emp.fileType) + ';base64,' + emp.enrollTemplate;
                 const facesToCheck = await faceapi.fetchImage(empImage);
@@ -89,11 +84,8 @@ export class FaceRecognitionService {
             }
 
             const scores = listOfDistances.map(result => result.match.distance);
-            console.log('Scores less than 6', scores);
             const minScore = Math.min(...scores);
             const minScoreCount = scores.filter(score => score === minScore && score < 0.51).length;
-            console.log('MinScoreCount', minScoreCount);
-
             if (minScoreCount === 1) {
                 const bestMatch = listOfDistances.find(result => result.match.distance === minScore);
                 return bestMatch;

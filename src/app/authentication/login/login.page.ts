@@ -29,7 +29,7 @@ export class LoginPage implements OnInit {
     private router: Router,
   ) { }
   ngOnInit() {
-    if (!localStorage.getItem('token') && localStorage.getItem('userName')) {
+    if (!localStorage.getItem('token') && localStorage.getItem('userName') && localStorage.getItem('pswd')) {
       this.autoLogin();
     }
   }
@@ -92,6 +92,7 @@ export class LoginPage implements OnInit {
   async presentAlert(msg: any) {
     const alert = await this.alertController.create({
       message: msg,
+      backdropDismiss: false,
       buttons: ['OK'],
     });
 

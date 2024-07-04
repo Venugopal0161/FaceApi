@@ -25,8 +25,6 @@ export class AttendanceLogsPage implements OnInit {
     })
     this.records = [...records];
     this.content_loaded = true;
-
-    console.log(this.records);
   }
   async viewImage(image) {
     const modal = await this.modalController.create({

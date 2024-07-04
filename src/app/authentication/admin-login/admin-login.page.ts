@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
@@ -10,7 +10,7 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
   templateUrl: './admin-login.page.html',
   styleUrls: ['./admin-login.page.scss'],
 })
-export class AdminLoginPage implements OnInit {
+export class AdminLoginPage {
   component = AppComponent;
 
   username = '';
@@ -29,9 +29,6 @@ export class AdminLoginPage implements OnInit {
 
   ) { }
 
-  ngOnInit(): void {
-    console.log('ominit');
-  }
 
   createLoginForm(): void {
     this.logInForm = this.fb.group({
@@ -60,7 +57,7 @@ export class AdminLoginPage implements OnInit {
               localStorage.setItem('adminName', jwtPayload.sub);
               localStorage.setItem('admin-data', JSON.stringify(res.response));
               this.router.navigateByUrl('/registeremp');
-              this.comp.callEverySec();
+              this.comp.verifyAdminAlredyLoginOrNot();
             } else {
               this.presentAlert('You are not admin');
             }
@@ -78,6 +75,7 @@ export class AdminLoginPage implements OnInit {
     const alert = await this.alertController.create({
       // cssClass: 'my-custom-class',
       // header: header,
+      backdropDismiss: false,
       message: msg,
       buttons: ['OK'],
     });

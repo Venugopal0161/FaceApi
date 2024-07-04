@@ -21,8 +21,8 @@ export class AppComponent {
     // { title: 'Spam', url: '/folder/spam', icon: 'warning' },
   ];
   public labels = [
-    { title: 'All Employees', url: '/home', icon: 'people', show: localStorage.getItem('admin-data') },
-    { title: 'Face Registration', url: '/registeremp', icon: 'person-add', show: localStorage.getItem('admin-data') },
+    { title: 'All Employees', url: '/home', icon: 'people' },
+    { title: 'Face Registration', url: '/registeremp', icon: 'person-add' },
     // { title: 'Mark Attendance', url: '/recognition', icon: 'person' },
     // { title: 'Mark In', url: '/mark-in', icon: 'people' },
     // { title: 'Mark Out', url: '/mark-out', icon: 'people' },
@@ -32,15 +32,11 @@ export class AppComponent {
   constructor(
     private router: Router
   ) {
-    ;
-    this.callEverySec();
+    this.verifyAdminAlredyLoginOrNot();
   }
-  callEverySec() {
+  verifyAdminAlredyLoginOrNot() {
     this.hasAdminLogin = localStorage.getItem('admin-data') ? true : false;
-    console.log(this.hasAdminLogin);
   }
-
-
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user-data');
@@ -49,7 +45,7 @@ export class AppComponent {
   logoutAsAdmin() {
     localStorage.removeItem('admintoken');
     localStorage.removeItem('admin-data');
-    this.callEverySec();
+    this.verifyAdminAlredyLoginOrNot();
     this.router.navigateByUrl('/recognition');
   }
   logInAsAdmin() {

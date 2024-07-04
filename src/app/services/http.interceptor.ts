@@ -26,8 +26,6 @@ export class MyHttpInterceptor implements HttpInterceptor {
 
   alreadyFired = false;
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    console.log(request, next);
-
     return next.handle(request).pipe(
       tap({
         next: (event) => {
@@ -124,7 +122,12 @@ export class MyHttpInterceptor implements HttpInterceptor {
     this.global.loadingController.dismiss();
     if (!this.yesExpired && !localStorage.getItem('token')) {
       this.yesExpired = true;
-      this.presentAlert('Session Expired', 'Click Ok... We will re-logging you in due to token expiration.');
+      if (localStorage.getItem('userName') && localStorage.getItem('pswd')) {
+        this.presentAlert('Session Expired', 'Click Ok... We will re-logging you in due to token expiration.');
+      } else {
+        this.presentAlert('Session Expired', 'Please Relogin due to token expiration.');
+      }
+
     }
   }
 

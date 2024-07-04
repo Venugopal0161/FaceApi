@@ -106,17 +106,13 @@ export class MarkInPage implements OnInit, ViewWillLeave {
     }
   }
   recgonise = async (base64data, base64String) => {
-    // console.log(base64data);
     const getTimeAndDate = this.getDateAndTime();
     const refFace = await faceapi.fetchImage(base64data);
     let refFaceAiData = await faceapi.detectAllFaces(refFace).withFaceLandmarks().withFaceDescriptors()
-    console.log('your face captured', refFaceAiData);
     if (refFaceAiData.length >= 1) {
       let empImage: string;
       let listOfDistances = [];
       const facedata = this.faceServ.listOfFaceData;
-      console.log('facedata', facedata);
-
       let faceMatcher = new faceapi.FaceMatcher(refFaceAiData);
       facedata.forEach(element => {
         const matchResults = element.facesToCheckAiData.map(face => {
@@ -136,14 +132,12 @@ export class MarkInPage implements OnInit, ViewWillLeave {
       // }
       // Step 2: Extract the scores
       const scores = listOfDistances.map(result => result.match.distance);
-      // console.log('scores lessthan 6', scores);
       // Step 3: Find the minimum score
       const minScore = Math.min(...scores);
       let val: number
       val = Number(minScore.toFixed(2));
       // Step 4: Count occurrences of the minimum score
       const minScoreCount = scores.filter(score => score === minScore && score <= 0.49).length;
-      console.log('minScoreCount', minScoreCount);
       this.loadingController.dismiss();
       // Step 5: Proceed if there is only one least value
       if (minScoreCount === 1) {
@@ -172,9 +166,9 @@ export class MarkInPage implements OnInit, ViewWillLeave {
         "dateCode": getTimeAndDate.date,
         "employeeCode": emp.employeeCode,
         "employeeName": emp.employeeName,
-        "outTime": getTimeAndDate.time,
-        'outDevice': localStorage.getItem('uuid'),
-        "outDate": getTimeAndDate.date,
+        "inTime": getTimeAndDate.time,
+        'inDevice': localStorage.getItem('uuid'),
+        "inDate": getTimeAndDate.date,
       },
       "type": "IN",
       fileName: emp.employeeCode + getTimeAndDate.time + getTimeAndDate.date,
@@ -221,6 +215,7 @@ export class MarkInPage implements OnInit, ViewWillLeave {
     this.alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: header,
+      backdropDismiss: false,
       message: msg,
       buttons: [
         {
@@ -240,6 +235,7 @@ export class MarkInPage implements OnInit, ViewWillLeave {
       cssClass: 'my-custom-class-danger',
       header: header,
       message: msg,
+      backdropDismiss: false,
       buttons: [
         {
           text: 'Ok',

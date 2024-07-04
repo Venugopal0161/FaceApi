@@ -15,9 +15,7 @@ export class ViewImagePage implements OnInit {
     private modalCtrl: ModalController,
   ) { }
 
-  ngOnInit() {
-    // console.log('image', this.image);
-    
+  ngOnInit() {  
      this.viewImage = this.image;
   }
 
