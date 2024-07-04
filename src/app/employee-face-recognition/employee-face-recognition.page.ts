@@ -174,7 +174,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
         const label = bestMatch.match.toString();
         this.captureImg = true;
         if (emp.employeeCode == this.selectedEmployee.employeeCode) {
-          this.presentAlert('Success', `Match found for ${emp.employeeName} - ${emp.employeeCode} with ${val}`)
+          this.presentAlert('Success', `Match found for ${emp.employeeName} - ${emp.employeeCode}`)
         }
       } else if (minScoreCount === 0) {
         this.speak('Sorry, I cannot recognize you');
@@ -283,8 +283,9 @@ export class EmployeeFaceRecognitionPage implements OnInit {
         "employeeCode": this.selectedEmployee.employeeCode,
         "employeeName": this.selectedEmployee.employeeName,
         "inTime": getTimeAndDate.time,
-        'inDevice': localStorage.getItem('uuid'),
+        'inDevice': localStorage.getItem('deviceId'),
         "inDate": getTimeAndDate.date,
+        application: 'X_Face'
       },
       "type": "IN",
       fileName: this.selectedEmployee.employeeCode + getTimeAndDate.time + getTimeAndDate.date,
@@ -303,7 +304,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
           cssClass: 'my-custom-class',
           backdropDismiss: false,
           header: 'Success',
-          message: 'Attendance marked',
+          message: 'Attendance Marked-In',
           buttons: [
             {
               text: 'Ok',
@@ -337,8 +338,10 @@ export class EmployeeFaceRecognitionPage implements OnInit {
         "employeeCode": this.selectedEmployee.employeeCode,
         "employeeName": this.selectedEmployee.employeeName,
         "outTime": getTimeAndDate.time,
-        'outDevice': localStorage.getItem('uuid'),
+        'outDevice': localStorage.getItem('deviceId'),
         "outDate": getTimeAndDate.date,
+        deviceId: localStorage.getItem('deviceId'),
+        application: 'X_Face'
       },
       "type": "OUT",
       fileName: this.selectedEmployee.employeeCode + getTimeAndDate.time + getTimeAndDate.date,
@@ -356,7 +359,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
           cssClass: 'my-custom-class',
           header: 'Success',
           backdropDismiss: false,
-          message: 'Attendance marked',
+          message: 'Attendance Marked-Out',
           buttons: [
             {
               text: 'Ok',

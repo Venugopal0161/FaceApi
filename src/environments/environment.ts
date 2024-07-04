@@ -3,13 +3,16 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: true,
+  production: false,
+
+  connect_url: 'https://at-api.springlogix.com/api/',
+  root_url: 'https://at-api.springlogix.com/',
 
   // connect_url: 'https://dev.springlogix.com/api/',
   // root_url: 'https://dev.springlogix.com/',
 
-  connect_url: 'https://192.168.29.3:446/api/',
-  root_url: 'https://192.168.29.3:446/',
+  // connect_url: 'https://192.168.29.3:446/api/',
+  // root_url: 'https://192.168.29.3:446/',
 
 };
 

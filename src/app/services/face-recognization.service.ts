@@ -38,20 +38,35 @@ export class FaceRecognitionService {
             this.employeeFingerData = res.response;
             const header = 'data:image/';
             let empImage: string;
-            for (let emp of this.employeeFingerData) {
-                empImage = header.concat(emp.fileType) + ';base64,' + emp.enrollTemplate
+            // for (let emp of this.employeeFingerData) {
+            //     empImage = header.concat(emp.fileType) + ';base64,' + emp.enrollTemplate
+            //     const facesToCheck = await faceapi.fetchImage(empImage);
+            //     let facesToCheckAiData = await faceapi.detectAllFaces(facesToCheck).withFaceLandmarks().withFaceDescriptors()
+            //     facesToCheckAiData = faceapi.resizeResults(facesToCheckAiData, facesToCheck)
+            //     this.listOfFaceData.push({
+            //         facesToCheckAiData: facesToCheckAiData,
+            //         emp: emp
+            //     })
+            //     console.log(this.listOfFaceData);
+
+            // }
+            const faceDetectionPromises = this.employeeFingerData.map(async (emp) => {
+                const empImage = header.concat(emp.fileType) + ';base64,' + emp.enrollTemplate;
                 const facesToCheck = await faceapi.fetchImage(empImage);
-                let facesToCheckAiData = await faceapi.detectAllFaces(facesToCheck).withFaceLandmarks().withFaceDescriptors()
-                facesToCheckAiData = faceapi.resizeResults(facesToCheckAiData, facesToCheck)
-                this.listOfFaceData.push({
+                let facesToCheckAiData = await faceapi.detectAllFaces(facesToCheck).withFaceLandmarks().withFaceDescriptors();
+                facesToCheckAiData = faceapi.resizeResults(facesToCheckAiData, facesToCheck);
+                return {
                     facesToCheckAiData: facesToCheckAiData,
                     emp: emp
-                })
-            }
+                };
+            });
+
+            this.listOfFaceData = await Promise.all(faceDetectionPromises);
             await this.dismissLoading();
             this.router.navigate(['/recognition']);
         },
-            err => {
+            async err => {
+                await this.dismissLoading();
                 console.error(err);
             })
     }

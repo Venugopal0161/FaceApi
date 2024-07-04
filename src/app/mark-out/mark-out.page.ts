@@ -148,11 +148,11 @@ export class MarkOutPage implements OnInit {
         const label = bestMatch.match.toString();
         this.speak(`Heyy ${emp.employeeName}`);
         this.captureImg = true;
-        this.presentAlert('Success', `Match found for ${emp.employeeName} - ${emp.employeeCode} with ${val}`)
+        this.presentAlert('Success', `Marked-Out for ${emp.employeeName} - ${emp.employeeCode}`)
         this.SendDataToApi(emp, base64String);
       } else if (minScoreCount === 0) {
         this.speak('Sorry, I cannot recognize you');
-        this.presentAlertForError('Error', `No match found and got value ${val}`);
+        this.presentAlertForError('Error', `No match found`);
       }
     }
     else {
@@ -170,8 +170,9 @@ export class MarkOutPage implements OnInit {
         "employeeCode": emp.employeeCode,
         "employeeName": emp.employeeName,
         "outTime": getTimeAndDate.time,
-        'outDevice': localStorage.getItem('uuid'),
+        'outDevice': localStorage.getItem('deviceId'),
         "outDate": getTimeAndDate.date,
+        application: 'X_Face'
       },
       "type": "OUT",
       fileName: emp.employeeCode + getTimeAndDate.time + getTimeAndDate.date,

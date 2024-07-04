@@ -147,11 +147,11 @@ export class MarkInPage implements OnInit, ViewWillLeave {
         const label = bestMatch.match.toString();
         this.speak(`Heyy ${emp.employeeName}`);
         this.captureImg = true;
-        this.presentAlert('Success', `Match found for ${emp.employeeName} - ${emp.employeeCode} with ${val} accuracy`)
+        this.presentAlert('Success', `Marked-In for ${emp.employeeName} - ${emp.employeeCode}`)
         this.SendDataToApi(emp, base64String, val);
       } else if (minScoreCount === 0) {
         this.speak('Sorry, I cannot recognize you');
-        this.presentAlertForError('Error', `No match found and got value ${val} accuracy`);
+        this.presentAlertForError('Error', `No match found`);
       }
     }
     else {
@@ -167,8 +167,10 @@ export class MarkInPage implements OnInit, ViewWillLeave {
         "employeeCode": emp.employeeCode,
         "employeeName": emp.employeeName,
         "inTime": getTimeAndDate.time,
-        'inDevice': localStorage.getItem('uuid'),
+        'inDevice': localStorage.getItem('deviceId'),
         "inDate": getTimeAndDate.date,
+        deviceId: localStorage.getItem('deviceId'),
+        application: 'X_Face'
       },
       "type": "IN",
       fileName: emp.employeeCode + getTimeAndDate.time + getTimeAndDate.date,

@@ -186,6 +186,7 @@ export class EmployeeFaceRegistrationPage implements OnInit {
           "employeeName": selectedEmpRecord.employeeName,
           "enrollTemplate": this.base64String,
           "fileType": this.imageObj.format,
+          deviceId: localStorage.getItem('deviceId'),
         }
         this.httpPost.create('fingerdata', obj).subscribe((res: any) => {
           if (res.status.message == 'SUCCESS') {
