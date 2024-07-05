@@ -5,11 +5,11 @@ import { GlobalvariablesService } from 'src/app/services/globalvariables.service
 import { HttpGetService } from 'src/app/services/http-get.service';
 
 @Component({
-  selector: 'app-emp-modal',
-  templateUrl: './emp-modal.page.html',
-  styleUrls: ['./emp-modal.page.scss'],
+  selector: 'app-employee-modal',
+  templateUrl: './employee-modal.page.html',
+  styleUrls: ['./employee-modal.page.scss'],
 })
-export class EmpModalPage implements OnInit {
+export class EmployeeModalPage implements OnInit {
 
   @Input() dept: any;
 
@@ -17,7 +17,7 @@ export class EmpModalPage implements OnInit {
   selectedEmployeeIndex: any;
   empList = [];
   temp = []
-
+  empLoaded = false
   constructor(
     private modalCtrl: ModalController,
     private router: Router,
@@ -50,7 +50,7 @@ export class EmpModalPage implements OnInit {
     this.modalCtrl.dismiss({
       dismissed: true
     });
-    this.router.navigateByUrl('/recognition')
+    this.router.navigateByUrl('/registeremp')
   }
 
   highlightSelected(index, employee) {
@@ -62,18 +62,18 @@ export class EmpModalPage implements OnInit {
   }
 
   getEmployeesData() {
-    this.global.presentLoading();
+    this.empLoaded = true
     this.httpGet
-      .getMasterList('empFingerData?deptCode=' + this.dept + '&isPresent=true')
+      .getMasterList('empFingerData?deptCode=' + this.dept + '&isPresent=false')
       .subscribe((res: any) => {
-        this.global.loadingController.dismiss();
         this.empList = res.response;
         this.temp = [...this.empList];
         console.log('empList', this.empList);
+        this.empLoaded = false
         
       },
         err => {
-          this.global.loadingController.dismiss();
+          this.empLoaded = false
           console.error(err);
         })
   }
@@ -87,5 +87,6 @@ export class EmpModalPage implements OnInit {
     });
     this.empList = temp;
   }
+
 
 }

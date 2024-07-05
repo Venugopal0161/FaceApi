@@ -351,7 +351,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
     this.global.presentLoading();
     this.httpPost.create('timesheet', obj).subscribe(async (res: any) => {
       this.global.loadingController.dismiss();
-      if (res.status.message === 'Record Already exist') {
+      if (res.status.message === 'Record Already existss') {
         this.presentAlertForError('Error', `Attendance already marked`)
       }
       else if (res.status.message === 'SUCCESS') {

@@ -3,6 +3,8 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { HttpGetService } from '../services/http-get.service';
 import { HttpPostService } from '../services/http-post.service';
 import { ToastService } from '../services/toast.service';
+import { EmployeeModalPage } from './employee-modal/employee-modal.page';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'app-employee-face-registration',
@@ -17,11 +19,14 @@ export class EmployeeFaceRegistrationPage implements OnInit {
   base64String: string;
   imageSrc: string;
   imageObj: any;
+  department = 'ALL';
+  selectedEmployee: any;
 
   constructor(
     private httpGet: HttpGetService,
     private httpPost: HttpPostService,
     private toastService: ToastService,
+    public modalController: ModalController,
   ) { }
 
   ngOnInit() {
@@ -62,12 +67,13 @@ export class EmployeeFaceRegistrationPage implements OnInit {
     this.imageSrc = null;
     this.base64String = null;
     this.captureImg = false;
-    this.imageObj = null
+    this.imageObj = null;
+    this.selectedEmployee = null;
   }
 
 
   async capturePhoto() {
-    if (this.selectedEmpCode) {
+    if (this.selectedEmployee) {
       const image = await Camera.getPhoto({
         quality: 90,
         allowEditing: false,
@@ -173,21 +179,23 @@ export class EmployeeFaceRegistrationPage implements OnInit {
     });
   }
   async submit() {
-    if (this.selectedEmpCode) {
+    if (this.selectedEmployee) {
       if (this.base64String) {
         this.toastService.presentToast('Info', 'Please Wait....', 'bottom', 'medium', 2000);
 
-        const selectedEmpRecord = this.empList.find(x => x.employeeCode == this.selectedEmpCode);
+        // const selectedEmpRecord = this.empList.find(x => x.employeeCode == this.selectedEmpCode);
         const obj = {
           base64: this.base64String,
-          empCode: selectedEmpRecord.employeeCode,
-          empName: selectedEmpRecord.employeeName,
-          "employeeCode": selectedEmpRecord.employeeCode,
-          "employeeName": selectedEmpRecord.employeeName,
+          empCode: this.selectedEmployee.employeeCode,
+          empName: this.selectedEmployee.employeeName,
+          "employeeCode": this.selectedEmployee.employeeCode,
+          "employeeName": this.selectedEmployee.employeeName,
           "enrollTemplate": this.base64String,
           "fileType": this.imageObj.format,
           deviceId: localStorage.getItem('deviceId'),
-        }
+        } 
+        console.log(obj);
+        
         this.httpPost.create('fingerdata', obj).subscribe((res: any) => {
           if (res.status.message == 'SUCCESS') {
             this.toastService.presentToast('Success', 'Employee registered Successfully', 'top', 'success', 2000);
@@ -206,6 +214,24 @@ export class EmployeeFaceRegistrationPage implements OnInit {
     }
     else {
       this.toastService.presentToast('Error', 'Please select employee', 'top', 'danger', 2000);
+    }
+  }
+
+  async openModal() {
+    if (!this.captureImg) {
+      const modal = await this.modalController.create({
+        component: EmployeeModalPage,
+        backdropDismiss: false,
+        cssClass: 'auto-height',
+        componentProps: {
+          // empList: this.empList
+          dept: this.department
+        }
+      });
+      modal.onDidDismiss().then((d: any) => {
+        this.selectedEmployee = d.data.empRecord;
+      });
+      return await modal.present();
     }
   }
 

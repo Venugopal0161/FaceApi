@@ -12,8 +12,11 @@
 
   <ion-searchbar class="ion-padding-horizontal" showCancelButton="false" (keyup)="updateFilter($event)"
     style="padding-bottom: 0"></ion-searchbar>
-
-  <div class="ion-margin-horizontal ion-padding-horizontal" style="height: fit-content;max-height: 160px !important;overflow-y: scroll;border: 1px solid gray;
+    <div style="text-align: center;
+    margin-top: 24px;" *ngIf="empLoaded">
+  <ion-spinner  name="crescent"  class="primary" ></ion-spinner>
+    </div>
+  <div *ngIf="!empLoaded" class="ion-margin-horizontal ion-padding-horizontal" style="height: fit-content;max-height: 160px !important;overflow-y: scroll;border: 1px solid gray;
     border-radius: 0 0 15px 15px;border-top: none;margin-top: 0;margin-bottom: 1px;">
     <ion-row *ngFor="let p of empList;let i =index" (click)="highlightSelected(i, p)"
       style="margin-bottom: 3px;border-bottom: 1px solid #e2e2e2;">
