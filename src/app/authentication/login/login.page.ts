@@ -53,22 +53,17 @@ export class LoginPage implements OnInit {
         (res: any) => {
           this.loadingController.dismiss();
           if (res.status.message === 'SUCCESS') {
-            console.log(res.response.roles, res.response.roles.includes('DV_USER'));
-
             if (res.response.roles.includes('DV_USER')) {
-
             localStorage.setItem('token', res.response.token);
               const jwtPayload = JSON.parse(window.atob(res.response.token.split('.')[1]));
             localStorage.setItem('userName', jwtPayload.sub);
               localStorage.setItem('pswd', this.password)
             localStorage.setItem('company', res.response.company);
-            localStorage.setItem('companyName', res.response.companyName);
-
+              localStorage.setItem('companyName', res.response.companyName);
               localStorage.setItem('branchCode', res.response.branch);
             localStorage.setItem('user-data', JSON.stringify(res.response));
               try {
-              this.faceRecognitionService.loadModels();
-                console.log('files loaded  from login');
+                this.faceRecognitionService.loadModels();
               } catch (error) {
               console.error('Error loading models:', error);
             }
@@ -79,7 +74,7 @@ export class LoginPage implements OnInit {
           }
         },
         (err) => {
-          console.log(err);
+          console.error(err);
           localStorage.removeItem('pswd');
           this.loadingController.dismiss();
           this.errorMessage = err.error.status.message;
@@ -131,18 +126,11 @@ export class LoginPage implements OnInit {
             localStorage.setItem('branchCode', res.response.branch);
             localStorage.setItem('user-data', JSON.stringify(res.response));
             this.router.navigateByUrl('/recognition');
-            try {
-              console.log('files loaded  from login');
-              this.global.loadingController.dismiss();
-            } catch (error) {
-              this.global.loadingController.dismiss();
-              console.error('Error loading models:', error);
-            }
             // home
           }
         },
         (err) => {
-          console.log(err);
+          console.error(err);
           localStorage.removeItem('pswd');
           this.global.loadingController.dismiss();
           this.errorMessage = err.error.status.message;

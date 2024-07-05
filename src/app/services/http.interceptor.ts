@@ -41,8 +41,7 @@ export class MyHttpInterceptor implements HttpInterceptor {
           return event;
         },
         error: (err) => {
-          console.log(err);
-
+          console.error(err);
           if (err.status === 401) {
             return this.isTokenExpired();
           }

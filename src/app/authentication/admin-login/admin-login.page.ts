@@ -50,7 +50,6 @@ export class AdminLoginPage {
         (res: any) => {
           this.loadingController.dismiss();
           if (res.status.message === 'SUCCESS') {
-            console.log(res);
             if (res.response.roles.includes('ADMIN')) {
               localStorage.setItem('admintoken', res.response.token);
               const jwtPayload = JSON.parse(window.atob(res.response.token.split('.')[1]));

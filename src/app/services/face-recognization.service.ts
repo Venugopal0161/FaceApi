@@ -47,8 +47,6 @@ export class FaceRecognitionService {
             //         facesToCheckAiData: facesToCheckAiData,
             //         emp: emp
             //     })
-            //     console.log(this.listOfFaceData);
-
             // }
             const faceDetectionPromises = this.employeeFingerData.map(async (emp) => {
                 const empImage = header.concat(emp.fileType) + ';base64,' + emp.enrollTemplate;
@@ -113,8 +111,8 @@ export class FaceRecognitionService {
     }
     async presentLoading() {
         this.loading = await this.loadingController.create({
-            message: 'Please wait...',
-            spinner: 'crescent'
+            message: 'System Initialization in Progress... This may take a few moments.',
+            spinner: 'circles'
         });
         await this.loading.present();
     }

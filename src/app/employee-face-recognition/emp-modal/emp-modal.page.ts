@@ -36,10 +36,7 @@ export class EmpModalPage implements OnInit {
   }
 
   add() {
-    console.log(this.selectedEmployee);
     if (this.selectedEmployee) {
-      // this.appUtilService.employeeDetails = this.selectedEmployee
-      // localStorage.setItem('paidVendor', this.selectedEmployee)
       this.modalCtrl.dismiss({
         empRecord: this.selectedEmployee,
         dismissed: true,
@@ -55,10 +52,7 @@ export class EmpModalPage implements OnInit {
 
   highlightSelected(index, employee) {
     this.selectedEmployeeIndex = index
-    this.selectedEmployee = employee
-  
-    // console.log(this.selectedCustomerIndex, this.selectedCustomer);
-  
+    this.selectedEmployee = employee 
   }
 
   getEmployeesData() {
@@ -68,9 +62,7 @@ export class EmpModalPage implements OnInit {
       .subscribe((res: any) => {
         this.global.loadingController.dismiss();
         this.empList = res.response;
-        this.temp = [...this.empList];
-        console.log('empList', this.empList);
-        
+        this.temp = [...this.empList];       
       },
         err => {
           this.global.loadingController.dismiss();
@@ -81,7 +73,6 @@ export class EmpModalPage implements OnInit {
   updateFilter(event) {
     this.selectedEmployeeIndex = null
     const val = event.target.value.toString().toLowerCase();
-    console.log(val);
     const temp = this.temp.filter(function (d) {
       return d.employeeName.toString().toLowerCase().indexOf(val) !== -1 || !val;
     });
