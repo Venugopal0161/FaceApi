@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar >
     <ion-title>Select Employee</ion-title>
     <ion-icon style="float: right;margin-top: -29px;
       margin-right: 13px;
@@ -10,21 +10,20 @@
 
 <div class="inner-content">
 
-  <ion-searchbar class="ion-padding-horizontal" showCancelButton="false"
-    (keyup)="updateFilter($event)"
+  <ion-searchbar class="ion-padding-horizontal" showCancelButton="false" (keyup)="updateFilter($event)"
     style="padding-bottom: 0"></ion-searchbar>
-
-  <div class="ion-margin-horizontal ion-padding-horizontal"
-    style="height: fit-content;max-height: 160px !important;overflow-y: scroll;border: 1px solid gray;
+    <div style="text-align: center;
+    margin-top: 24px;" *ngIf="empLoaded">
+  <ion-spinner  name="crescent"  class="primary" ></ion-spinner>
+    </div>
+  <div *ngIf="!empLoaded" class="ion-margin-horizontal ion-padding-horizontal" style="height: fit-content;max-height: 160px !important;overflow-y: scroll;border: 1px solid gray;
     border-radius: 0 0 15px 15px;border-top: none;margin-top: 0;margin-bottom: 1px;">
-    <ion-row *ngFor="let p of empList;let i =index"
-      (click)="highlightSelected(i, p)"
+    <ion-row *ngFor="let p of empList;let i =index" (click)="highlightSelected(i, p)"
       style="margin-bottom: 3px;border-bottom: 1px solid #e2e2e2;">
       <ion-col size="10">
         {{p.employeeName}} - ({{p.employeeCode}})
       </ion-col>
-      <ion-col size="2" *ngIf="i === selectedEmployeeIndex"
-        class="ion-text-center">
+      <ion-col size="2" *ngIf="i == selectedEmployeeIndex" class="ion-text-center">
         <ion-icon name="checkmark" style="font-size: large;"></ion-icon>
       </ion-col>
     </ion-row>
@@ -33,14 +32,17 @@
   <ion-grid>
     <ion-row>
       <ion-col size="5" offset="1">
-        <ion-button expand="full" shape="round" color="danger"
-          (click)="dismiss()">Close</ion-button>
+        <ion-button  expand="full" shape="round" color="danger" (click)="dismiss()">Close</ion-button>
       </ion-col>
       <ion-col size="5">
-        <ion-button expand="full" shape="round" (click)="add()">OK</ion-button>
+        <ion-button  expand="full" shape="round" (click)="add()">OK</ion-button>
       </ion-col>
     </ion-row>
 
   </ion-grid>
 
+
 </div>
+
+
+

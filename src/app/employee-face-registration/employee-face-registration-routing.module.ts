@@ -7,6 +7,10 @@ const routes: Routes = [
   {
     path: '',
     component: EmployeeFaceRegistrationPage
+  },
+  {
+    path: 'employee-modal',
+    loadChildren: () => import('./employee-modal/employee-modal.module').then( m => m.EmployeeModalPageModule)
   }
 ];
 

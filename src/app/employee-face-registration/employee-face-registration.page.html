@@ -9,19 +9,31 @@
 <ion-content class="ion-padding">
 
   <!-- <ion-item lines="none"> -->
-  <ion-select label="Department" class="animate__animated animate__fadeInUp" label-placement="floating"
+  <ion-select label="Department" [(ngModel)]="department" class="animate__animated animate__fadeInUp" label-placement="floating"
     fill="outline" (ionChange)="getEmployeesData($event)">
     <ion-select-option *ngFor="let c of deptList"
       [value]="c.deptCode">{{c.deptName}}</ion-select-option>
   </ion-select>
 
-  <ion-select label="Employee" class="ion-margin-top animate__animated animate__fadeInUp" label-placement="floating"
+  <!-- <ion-select label="Employee" class="ion-margin-top animate__animated animate__fadeInUp" label-placement="floating"
     fill="outline" (ionChange)="changeInEmp($event)">
     <ion-select-option *ngFor="let c of empList"
       [value]="c.employeeCode">{{c.employeeName}}
       - [{{c.employeeCode}}]</ion-select-option>
-  </ion-select>
+  </ion-select> -->
 
+  <ion-item style="border: 1px solid #b3b3b3;
+  width: 99%;
+  border-radius: 4px;" class="animate__animated animate__fadeInUp ion-margin-top" lines="none" (click)="openModal()" [button]="true" [detail]="false"
+  id="select-employee">
+  <ion-label> {{ selectedEmployee?.employeeName &&
+    selectedEmployee?.employeeCode
+    ? (selectedEmployee.employeeName + ' (' + selectedEmployee.employeeCode +
+    ')')
+    : 'Select Employee' }}
+  </ion-label>
+  <!-- <div slot="end" id="selected-employee">{{ selectedEmployeeText }}</div> -->
+</ion-item>
  
 
 
