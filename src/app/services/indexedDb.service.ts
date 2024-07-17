@@ -4,8 +4,8 @@ import { Injectable } from '@angular/core';
     providedIn: 'root',
 })
 export class IndexedDBService {
-    private dbName = 'EmployeeDB';
-    private storeName = 'EmployeeRecords';
+    private dbName = 'EmployeeDB1';
+    private storeName = 'EmployeeRecords1';
 
     constructor() { }
 
@@ -18,13 +18,29 @@ export class IndexedDBService {
                 const store = db.createObjectStore(this.storeName, { keyPath: 'id', autoIncrement: true });
                 store.createIndex('status', 'status', { unique: false });
             };
-
             request.onsuccess = (event: Event) => {
                 resolve((event.target as IDBOpenDBRequest).result);
             };
 
             request.onerror = (event: Event) => {
                 reject((event.target as IDBOpenDBRequest).error);
+            };
+        });
+    }
+
+
+    async storeRecord(record: any) {
+        const db = await this.openDatabase();
+        const transaction = db.transaction([this.storeName], 'readwrite');
+        const store = transaction.objectStore(this.storeName);
+
+        return new Promise<void>((resolve, reject) => {
+            store.add(record);
+            transaction.oncomplete = () => {
+                resolve();
+            };
+            transaction.onerror = (event: Event) => {
+                reject((event.target as IDBRequest).error);
             };
         });
     }
@@ -47,5 +63,19 @@ export class IndexedDBService {
         });
     }
 
-    // Add other methods like storeRecord, updateRecordStatus, etc. here as needed
+    async deleteRecord(id: number): Promise<void> {
+        const db = await this.openDatabase();
+        const transaction = db.transaction([this.storeName], 'readwrite');
+        const store = transaction.objectStore(this.storeName);
+
+        return new Promise<void>((resolve, reject) => {
+            const request = store.delete(id);
+            request.onsuccess = () => {
+                resolve();
+            };
+            request.onerror = (event: Event) => {
+                reject((event.target as IDBRequest).error);
+            };
+        });
+    }
 }

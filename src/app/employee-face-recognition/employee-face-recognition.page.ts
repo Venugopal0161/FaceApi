@@ -8,6 +8,7 @@ import { FaceRecognitionService } from '../services/face-recognization.service';
 import { GlobalvariablesService } from '../services/globalvariables.service';
 import { HttpGetService } from '../services/http-get.service';
 import { HttpPostService } from '../services/http-post.service';
+import { IndexedDBService } from '../services/indexedDb.service';
 import { ToastService } from '../services/toast.service';
 import { EmpModalPage } from './emp-modal/emp-modal.page';
 
@@ -39,6 +40,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
     private alertController: AlertController,
     private faceServ: FaceRecognitionService,
     private global: GlobalvariablesService,
+    private indexDb: IndexedDBService,
     public loadingController: LoadingController,
     public toastService: ToastService,
     public modalController: ModalController,
@@ -178,7 +180,7 @@ export class EmployeeFaceRecognitionPage implements OnInit {
         }
       } else if (minScoreCount === 0) {
         this.speak('Sorry, I cannot recognize you');
-        this.presentAlertForError('Error', `No match found and got value ${val}`);
+        this.presentAlertForError('Error', `No match found`);
       }
     }
     else {
@@ -267,9 +269,10 @@ export class EmployeeFaceRecognitionPage implements OnInit {
           dept: this.department
         }
       });
-      modal.onDidDismiss().then((d: any) => {
+      modal.onDidDismiss().then(async (d: any) => {
+        const records = await this.indexDb.getAllRecords()
         this.selectedEmployee = d.data.empRecord;
-        this.selectedEmployeefacePrint = this.faceServ.listOfFaceData.find(x => x.emp.employeeCode == this.selectedEmployee.employeeCode);
+        this.selectedEmployeefacePrint = records.find(x => x.emp.employeeCode == this.selectedEmployee.employeeCode);
       });
       return await modal.present();
     }

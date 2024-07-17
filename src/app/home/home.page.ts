@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
+import * as faceapi from 'face-api.js';
 import { GlobalvariablesService } from '../services/globalvariables.service';
 import { HttpGetService } from '../services/http-get.service';
 import { HttpPutService } from '../services/http-put.service';
+import { IndexedDBService } from '../services/indexedDb.service';
 import { ViewImagePage } from './view-image/view-image.page';
 
 @Component({
@@ -31,7 +33,8 @@ export class HomePage implements OnInit {
   constructor(
     private httpGet: HttpGetService,
     private modalController: ModalController,
-    private httpPut :HttpPutService,
+    private httpPut: HttpPutService,
+    private indexDb: IndexedDBService,
     private global: GlobalvariablesService,
   ) { }
 
@@ -40,15 +43,42 @@ export class HomePage implements OnInit {
     this.getFingerData();
   }
 
-  getFingerData() {
+  async getFingerData() {
     this.global.presentLoading();
-    this.httpGet.getMasterList('fingerdatas').subscribe((res: any) => {
+    this.httpGet.getMasterList('fingerdatas').subscribe(async (res: any) => {
       res.response.forEach(element => {
         element.image = 'data:image/jpeg;base64,' + element.enrollTemplate;
       });
       this.global.loadingController.dismiss();
       this.employeeFingerData = res.response;
       this.temp = [...this.employeeFingerData];
+      const recordsFromDb = await this.indexDb.getAllRecords();
+      let employeeCodeSet = new Set(this.employeeFingerData.map(e => e.employeeCode));
+      let missingEmployeeRecords = recordsFromDb.filter(emp => !employeeCodeSet.has(emp.emp.employeeCode));
+      missingEmployeeRecords.forEach(x => {
+        this.indexDb.deleteRecord(x.id);
+      })
+      const records = await this.indexDb.getAllRecords();
+
+      let empCodeSet = new Set(records.map(emp => emp.emp.employeeCode));
+      let missingRecords = this.employeeFingerData.filter(empData => !empCodeSet.has(empData.employeeCode));
+      if (missingRecords.length > 0) {
+        let records: any;
+        const faceDetectionPromises = missingRecords.map(async (emp) => {
+          // const empImage = header.concat(emp.fileType) + ';base64,' + emp.enrollTemplate;
+          const facesToCheck = await faceapi.fetchImage(emp.image);
+          let facesToCheckAiData = await faceapi.detectAllFaces(facesToCheck).withFaceLandmarks().withFaceDescriptors();
+          facesToCheckAiData = faceapi.resizeResults(facesToCheckAiData, facesToCheck);
+          records = {
+            facesToCheckAiData: facesToCheckAiData,
+            emp: {
+              employeeCode: emp.employeeCode,
+              employeeName: emp.employeeName,
+            }
+          };
+          this.indexDb.storeRecord(records);
+        });
+      }
     },
       err => {
         this.global.loadingController.dismiss();
@@ -66,12 +96,15 @@ async viewImage(image){
   modal.present();
   modal.onWillDismiss().then((d: any) => {});
 }
-deleteEmployee(id) {
-  this.global.presentLoading();
-  this.httpPut.update('fd?fdId=' + id, '').subscribe((res: any) => {
-    this.global.loadingController.dismiss();
-    // this.getFingerData();
-    if(res.status.message === 'SUCCESS'){
+  async deleteEmployee(emp) {
+    this.global.presentLoading();
+    const allrecords = await this.indexDb.getAllRecords();
+    const found = allrecords.find(ep => ep.emp.employeeCode === emp.employeeCode)
+    this.indexDb.deleteRecord(found.id);
+    this.httpPut.update('fd?fdId=' + emp.id, '').subscribe((res: any) => {
+      // this.getFingerData();
+      if (res.status.message === 'SUCCESS') {
+        this.global.loadingController.dismiss();
       this.global.showAlert('Employee Deleted Successfully', 'Success','','','');
       this.getFingerData();
     }
@@ -95,7 +128,7 @@ deleteEmployee(id) {
      {
        text:'Yes',
        handler: () => {
-        this.deleteEmployee(emp.id);
+         this.deleteEmployee(emp);
        }
      }
    ]);

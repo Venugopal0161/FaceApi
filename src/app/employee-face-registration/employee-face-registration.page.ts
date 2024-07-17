@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { ModalController } from '@ionic/angular';
+import * as faceapi from 'face-api.js';
 import { HttpGetService } from '../services/http-get.service';
 import { HttpPostService } from '../services/http-post.service';
+import { IndexedDBService } from '../services/indexedDb.service';
 import { ToastService } from '../services/toast.service';
 import { EmployeeModalPage } from './employee-modal/employee-modal.page';
 
@@ -27,6 +29,7 @@ export class EmployeeFaceRegistrationPage implements OnInit {
     private httpPost: HttpPostService,
     private toastService: ToastService,
     public modalController: ModalController,
+    private indexDb: IndexedDBService
   ) { }
 
   ngOnInit() {
@@ -181,8 +184,8 @@ export class EmployeeFaceRegistrationPage implements OnInit {
   async submit() {
     if (this.selectedEmployee) {
       if (this.base64String) {
+        let record: any;
         this.toastService.presentToast('Info', 'Please Wait....', 'bottom', 'medium', 2000);
-
         // const selectedEmpRecord = this.empList.find(x => x.employeeCode == this.selectedEmpCode);
         const obj = {
           base64: this.base64String,
@@ -194,9 +197,20 @@ export class EmployeeFaceRegistrationPage implements OnInit {
           "fileType": this.imageObj.format,
           deviceId: localStorage.getItem('deviceId'),
         }        
-        this.httpPost.create('fingerdata', obj).subscribe((res: any) => {
+        this.httpPost.create('fingerdata', obj).subscribe(async (res: any) => {
           if (res.status.message == 'SUCCESS') {
             this.toastService.presentToast('Success', 'Employee registered Successfully', 'top', 'success', 2000);
+            const facesToCheck = await faceapi.fetchImage(this.imageSrc);
+            let facesToCheckAiData = await faceapi.detectAllFaces(facesToCheck).withFaceLandmarks().withFaceDescriptors();
+            facesToCheckAiData = faceapi.resizeResults(facesToCheckAiData, facesToCheck);
+            record = {
+              facesToCheckAiData: facesToCheckAiData,
+              emp: {
+                employeeCode: this.selectedEmployee.employeeCode,
+                employeeName: this.selectedEmployee.employeeName,
+              }
+            };
+            this.indexDb.storeRecord(record);
             this.clear();
           } else {
             this.toastService.presentToast('Error', res, 'top', 'danger', 2000);

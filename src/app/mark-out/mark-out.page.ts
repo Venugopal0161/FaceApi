@@ -7,6 +7,7 @@ import { FaceRecognitionService } from '../services/face-recognization.service';
 import { GlobalvariablesService } from '../services/globalvariables.service';
 import { HttpGetService } from '../services/http-get.service';
 import { HttpPostService } from '../services/http-post.service';
+import { IndexedDBService } from '../services/indexedDb.service';
 import { ToastService } from '../services/toast.service';
 @Component({
   selector: 'app-mark-out',
@@ -29,6 +30,7 @@ export class MarkOutPage implements OnInit {
     private faceServ: FaceRecognitionService,
     private global: GlobalvariablesService,
     public loadingController: LoadingController,
+    private indexDb: IndexedDBService,
     public toastService: ToastService,
   ) {
   }
@@ -114,9 +116,8 @@ export class MarkOutPage implements OnInit {
     const refFace = await faceapi.fetchImage(base64data);
     let refFaceAiData = await faceapi.detectAllFaces(refFace).withFaceLandmarks().withFaceDescriptors()
     if (refFaceAiData.length >= 1) {
-      let empImage: string;
       let listOfDistances = [];
-      const facedata = this.faceServ.listOfFaceData;
+      const facedata = await this.indexDb.getAllRecords();
       let faceMatcher = new faceapi.FaceMatcher(refFaceAiData);
       facedata.forEach(element => {
         const matchResults = element.facesToCheckAiData.map(face => {
@@ -134,7 +135,6 @@ export class MarkOutPage implements OnInit {
       });
       // Step 2: Extract the scores
       const scores = listOfDistances.map(result => result.match.distance);
- 
       const minScore = Math.min(...scores);
       let val: number
       val = Number(minScore.toFixed(2));

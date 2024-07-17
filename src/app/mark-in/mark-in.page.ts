@@ -6,6 +6,7 @@ import * as faceapi from 'face-api.js';
 import { FaceRecognitionService } from '../services/face-recognization.service';
 import { GlobalvariablesService } from '../services/globalvariables.service';
 import { HttpPostService } from '../services/http-post.service';
+import { IndexedDBService } from '../services/indexedDb.service';
 import { ToastService } from '../services/toast.service';
 @Component({
   selector: 'app-mark-in',
@@ -29,6 +30,7 @@ export class MarkInPage implements OnInit, ViewWillLeave {
     private global: GlobalvariablesService,
     public loadingController: LoadingController,
     public toastService: ToastService,
+    private indexDb: IndexedDBService
   ) {
   }
 
@@ -112,7 +114,7 @@ export class MarkInPage implements OnInit, ViewWillLeave {
     if (refFaceAiData.length >= 1) {
       let empImage: string;
       let listOfDistances = [];
-      const facedata = this.faceServ.listOfFaceData;
+      const facedata = await this.indexDb.getAllRecords();
       let faceMatcher = new faceapi.FaceMatcher(refFaceAiData);
       facedata.forEach(element => {
         const matchResults = element.facesToCheckAiData.map(face => {
@@ -256,11 +258,12 @@ export class MarkInPage implements OnInit, ViewWillLeave {
 
 
   ionViewWillLeave(): void {
-    this.alert.dismiss();
     this.captureImg = false;
     this.clickedimageSrc = null;
     this.cameraActive = false;
     this.imageObj = null;
+    this.alert ? this.alert.dismiss() : '';
+
   }
 
 

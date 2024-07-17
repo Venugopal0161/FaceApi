@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Device } from '@capacitor/device';
+import { IndexedDBService } from './services/indexedDb.service';
 
 @Component({
   selector: 'app-root',
@@ -32,7 +33,8 @@ export class AppComponent {
   ]
 
   constructor(
-    private router: Router
+    private router: Router,
+    private indexDb: IndexedDBService
   ) {
     this.verifyAdminAlredyLoginOrNot();
     this.logDeviceInfo();

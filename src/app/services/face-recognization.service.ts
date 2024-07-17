@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
 import * as faceapi from 'face-api.js';
 import { HttpGetService } from './http-get.service';
+import { IndexedDBService } from './indexedDb.service';
 
 @Injectable({
     providedIn: 'root'
@@ -15,7 +16,8 @@ export class FaceRecognitionService {
     constructor(
         private httpGet: HttpGetService,
         public loadingController: LoadingController,
-        private router: Router
+        private router: Router,
+        private indexDb: IndexedDBService
 
     ) {
 
@@ -29,7 +31,6 @@ export class FaceRecognitionService {
             faceapi.nets.faceRecognitionNet.loadFromUri('/assets'),
             // faceapi.nets.ageGenderNet.loadFromUri('/assets'),
         ]);
-        console.log('Models loaded successfully');
         this.getFingerData();
     }
 
@@ -38,29 +39,47 @@ export class FaceRecognitionService {
             this.employeeFingerData = res.response;
             const header = 'data:image/';
             let empImage: string;
-            // for (let emp of this.employeeFingerData) {
-            //     empImage = header.concat(emp.fileType) + ';base64,' + emp.enrollTemplate
-            //     const facesToCheck = await faceapi.fetchImage(empImage);
-            //     let facesToCheckAiData = await faceapi.detectAllFaces(facesToCheck).withFaceLandmarks().withFaceDescriptors()
-            //     facesToCheckAiData = faceapi.resizeResults(facesToCheckAiData, facesToCheck)
-            //     this.listOfFaceData.push({
-            //         facesToCheckAiData: facesToCheckAiData,
-            //         emp: emp
-            //     })
-            // }
-            const faceDetectionPromises = this.employeeFingerData.map(async (emp) => {
+            const recordsFromDb = await this.indexDb.getAllRecords();
+            let employeeCodeSet = new Set(this.employeeFingerData.map(e => e.employeeCode));
+            let missingEmployeeRecords = recordsFromDb.filter(emp => !employeeCodeSet.has(emp.emp.employeeCode));
+            missingEmployeeRecords.forEach(x => {
+                this.indexDb.deleteRecord(x.id);
+            })
+            const records = await this.indexDb.getAllRecords();
+            let empCodeSet = new Set(records.map(emp => emp.emp.employeeCode));
+            // Filter out records from secondList that are missing in firstList
+            let missingRecords = this.employeeFingerData.filter(empData => !empCodeSet.has(empData.employeeCode));
+            if (missingRecords.length > 0) {
+                let records: any;
+                const faceDetectionPromises = missingRecords.map(async (emp) => {
                 const empImage = header.concat(emp.fileType) + ';base64,' + emp.enrollTemplate;
                 const facesToCheck = await faceapi.fetchImage(empImage);
                 let facesToCheckAiData = await faceapi.detectAllFaces(facesToCheck).withFaceLandmarks().withFaceDescriptors();
                 facesToCheckAiData = faceapi.resizeResults(facesToCheckAiData, facesToCheck);
+                    records = {
+                        facesToCheckAiData: facesToCheckAiData,
+                        emp: {
+                            employeeCode: emp.employeeCode,
+                            employeeName: emp.employeeName,
+                        }
+                    };
+                    this.indexDb.storeRecord(records);
                 return {
                     facesToCheckAiData: facesToCheckAiData,
-                    emp: emp
+                    emp: {
+                        employeeCode: emp.employeeCode,
+                        employeeName: emp.employeeName,
+                    }
                 };
             });
 
             this.listOfFaceData = await Promise.all(faceDetectionPromises);
+
             await this.dismissLoading();
+            } else {
+                this.listOfFaceData = await records;
+                await this.dismissLoading();
+            }
             this.router.navigate(['/recognition']);
         },
             async err => {
